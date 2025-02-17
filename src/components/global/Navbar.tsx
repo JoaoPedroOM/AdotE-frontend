@@ -1,6 +1,7 @@
 import { useState } from "react";
 import chorome from "../../assets/img/chrome.png";
 import { Link } from "react-router";
+import { Link as ScrollLink } from "react-scroll";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,12 +58,14 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="cursor-pointer">
-              <Link
-                to="/"
+              <ScrollLink
+                to="sobre"
+                smooth={true}
+                duration={500}
                 className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
               >
                 Sobre Nós
-              </Link>
+              </ScrollLink>
             </li>
             <li>
               <Link
