@@ -1,5 +1,5 @@
 import { useState } from "react";
-import chorome from "../assets/img/chrome.png";
+import chorome from "../../assets/img/chrome.png";
 import { Link } from "react-router";
 
 const Navbar = () => {

@@ -1,4 +1,4 @@
-import Navbar from "./components/Navbar";
+import Navbar from "./components/global/Navbar";
 import pata from "./assets/img/paw.png";
 import Card from "./components/Card";
 import Hero from "./components/Hero";
