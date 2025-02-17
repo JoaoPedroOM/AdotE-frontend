@@ -5,7 +5,13 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+  			main: 'Passion One',
+  			second: 'Englebert',
+  			tertiary: 'Jost'
+  		},
+    },
   },
   plugins: [],
 }
