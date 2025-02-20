@@ -33,7 +33,7 @@ const Card = ({
         <h2 className="font-main font-bold text-[clamp(2rem,1.6429rem+1.7857vw,4.5rem)] leading-[1] text-[#CC5500]">
           {title}
         </h2>
-        <p className="font-tertiary font-medium text-[clamp(1.125rem,1.0357rem+0.4464vw,1.75rem)] leading-[1] mt-3 mb-5 text-[#000]">
+        <p className="font-tertiary font-medium text-[clamp(1.125rem,1.0357rem+0.4464vw,1.75rem)] leading-[1] mt-3 mb-5 text-gray-900">
           {description}
         </p>
       <Button buttonPath={buttonPath} buttonTitle={buttonTitle}/>

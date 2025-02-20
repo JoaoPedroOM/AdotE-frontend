@@ -18,6 +18,7 @@ export const registerSchema = baseAuthSchema
     organizationName: z.string().min(1, "O nome da organização é obrigatório"),
     phone: z.string().length(15, "O telefone precisa ser válido"),
     cep: z.string().length(9, "O CEP precisa ser válido"),
+    cnpj: z.string().length(18, "O CNPJ precisa ser válido"),
   })
 
 export type LoginFormValues = z.infer<typeof loginSchema>;

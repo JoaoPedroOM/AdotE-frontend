@@ -10,8 +10,11 @@ import chorome from "../assets/img/chrome.png";
 import { Label } from "@/components/ui/label";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 const Cadastro = () => {
+  const { cadastroAndLogin, error } = useAuth();
+
   const {
     register,
     reset,
@@ -21,17 +24,39 @@ const Cadastro = () => {
     resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = (data: FieldValues) => {
+  async function onSubmit(data: FieldValues) {
     console.log("Form dados:", data);
+    const email = data.email;
+    const password = data.password;
+    const role = "ORGANIZATION";
+    const name = data.organizationName;
+    const cnpj = data.cnpj.replace(/\D/g, "");
+    const postalCode = data.cep.replace(/\D/g, "");
+    const phoneNumber = data.phone.replace(/\D/g, "");
 
-    reset({
-      email: "",
-      password: "",
-      organizationName:"",
-      phone: "",
-      cep: ""
-    });
-  };
+    try {
+      await cadastroAndLogin(
+        email,
+        password,
+        role,
+        name,
+        cnpj,
+        postalCode,
+        phoneNumber
+      );
+
+      reset({
+        email: "",
+        password: "",
+        cnpj: "",
+        organizationName: "",
+        phone: "",
+        cep: "",
+      });
+    } catch (error) {
+      console.error("Erro ao tentar cadastrar:", error);
+    }
+  }
 
   return (
     <div className="flex h-screen">
@@ -41,7 +66,10 @@ const Cadastro = () => {
       <div className="page_texture" />
 
       <div className="flex-1 flex flex-col items-center justify-center text-white">
-      <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+        <Link
+          to="/"
+          className="flex items-center space-x-3 rtl:space-x-reverse"
+        >
           <img src={chorome} className="h-8" alt="Adota Logo" />
           <span className="self-center text-2xl font-bold font-main whitespace-nowrap text-black">
             Adotar
@@ -49,7 +77,7 @@ const Cadastro = () => {
         </Link>
         <div className="text-center mb-[30px] text-black">
           <h1 className="font-main text-3xl">
-          Cadastre-se agora
+            Cadastre-se agora
             <br />
           </h1>
           <p className="font-tertiary">
@@ -65,7 +93,10 @@ const Cadastro = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <div>
-            <Label htmlFor="organizationName" className="text-black font-tertiary">
+            <Label
+              htmlFor="organizationName"
+              className="text-black font-tertiary"
+            >
               Nome da organização
             </Label>
             <input
@@ -93,6 +124,22 @@ const Cadastro = () => {
             />
             <p className="text-xs font-semibold text-red-700 mt-1">
               <ErrorMessage errors={errors} name="phone" />
+            </p>
+          </div>
+
+          <div>
+            <Label htmlFor="cnpj" className="text-black font-tertiary">
+              CNPJ
+            </Label>
+            <InputMask
+              mask="__.___.___/____-__"
+              replacement={{ _: /\d/ }}
+              {...register("cnpj")}
+              placeholder="00.000.000/0000-00"
+              className="input"
+            />
+            <p className="text-xs text-red-700 mt-1">
+              <ErrorMessage errors={errors} name="cnpj" />
             </p>
           </div>
 
@@ -143,6 +190,12 @@ const Cadastro = () => {
               <ErrorMessage errors={errors} name="password" />
             </p>
           </div>
+
+          {error && (
+            <div className="bg-red-100 text-red-700 p-3 rounded-md mb-3 text-sm font-semibold w-full max-w-sm">
+              {error}
+            </div>
+          )}
 
           <button
             className={cn(

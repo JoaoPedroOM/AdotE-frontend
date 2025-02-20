@@ -9,7 +9,7 @@ const App = () => {
       <img
         src={pata}
         alt="Detalhe decorativo"
-        className="absolute z-[2000] opacity-70 pointer-events-none transform -rotate-12 lg:top-5"
+        className="absolute lg:z-[200] z-40 opacity-70 pointer-events-none transform -rotate-12 lg:top-5"
       />
 
     <img
