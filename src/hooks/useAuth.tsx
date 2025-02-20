@@ -7,7 +7,6 @@ import { useState } from "react";
 import Cookies from "js-cookie";
 
 export const useAuth = () => {
-  const [authToken, setAuthToken] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
   const login = async (email: string, password: string) => {
@@ -19,7 +18,6 @@ export const useAuth = () => {
         secure: true,
         sameSite: "Strict",
       });
-      setAuthToken(data.token);
       setError(null);
     } catch (err: any) {
       const errorMessage =
@@ -69,9 +67,8 @@ export const useAuth = () => {
 
   const logout = () => {
     Cookies.remove("authToken");
-    setAuthToken(null);
     console.log("Logout realizado com sucesso!");
   };
 
-  return { authToken, login, cadastroAndLogin, resetPassword, logout, error };
+  return { login, cadastroAndLogin, resetPassword, logout, error };
 };

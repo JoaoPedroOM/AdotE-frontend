@@ -29,7 +29,7 @@ const Footer = () => {
                 </li>
                 <li className="text-xl font-medium font-tertiary">
                   <Link 
-                    to="https://github.com/JoaoPedroOM" 
+                    to="https://github.com/Project-AdotE" 
                     target="_blank" 
                     rel="noopener noreferrer"
                   >

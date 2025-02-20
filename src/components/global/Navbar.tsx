@@ -16,6 +16,8 @@ import {
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuthContext();
+
+  console.log(user);
   const navigate = useNavigate();
 
   const handleLogout = () => {

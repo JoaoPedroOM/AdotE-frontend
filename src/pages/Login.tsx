@@ -30,6 +30,7 @@ const Login = () => {
         password: "",
       });
       navigate("/dashboard", { replace: true });
+    window.location.reload();
     } catch (error) {
       console.error("Erro ao fazer login:", error);
     }

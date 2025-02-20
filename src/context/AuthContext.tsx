@@ -12,13 +12,17 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const { login, logout: authLogout, error, authToken } = useAuth();
+    const { login, logout: authLogout, error } = useAuth();
   const [user, setUser] = useState<boolean | null>(null);
 
-  useEffect(() => {
+   useEffect(() => {
     const storedToken = Cookies.get("authToken");
-    setUser(!!storedToken); 
-  }, [authToken]); 
+    if (storedToken) {
+      setUser(true);
+    } else {
+      setUser(false); 
+    }
+  }, []); 
 
   const handleLogout = async () => {
     await authLogout();
