@@ -3,11 +3,20 @@ import {
   loginService,
   resetPasswordService,
 } from "@/services/authService";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export const useAuth = () => {
   const [error, setError] = useState<string | null>(null);
+  const { islogin, islogout } = useAuthStore();
+
+  useEffect(() => {
+    const savedToken = Cookies.get('authToken');
+    if (savedToken) {
+      islogin(savedToken); 
+    }
+  }, [islogin]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -18,6 +27,7 @@ export const useAuth = () => {
         secure: true,
         sameSite: "Strict",
       });
+      islogin(data.token);
       setError(null);
     } catch (err: any) {
       const errorMessage =
@@ -67,6 +77,7 @@ export const useAuth = () => {
 
   const logout = () => {
     Cookies.remove("authToken");
+    islogout();
     console.log("Logout realizado com sucesso!");
   };
 

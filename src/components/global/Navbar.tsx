@@ -2,7 +2,6 @@ import { useState } from "react";
 import chorome from "../../assets/img/chrome.png";
 import { Link, useNavigate } from "react-router";
 import { Link as ScrollLink } from "react-scroll";
-import { useAuthContext } from "@/context/AuthContext";
 import perfil from "../../assets/img/UserPerfil.png"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,16 +11,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, logout } = useAuthContext();
+  const {isLoggedIn, islogout} = useAuthStore();
 
-  console.log(user);
+  console.log(isLoggedIn);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();
+    islogout();
     navigate("/login", { replace: true });
   };
 
@@ -86,7 +86,7 @@ const Navbar = () => {
                 Sobre Nós
               </ScrollLink>
             </li>
-            {user ? (
+            {isLoggedIn ? (
               <div className="md:w-auto w-full md:px-3">
                 <div className="md:block hidden">
                 <DropdownMenu>

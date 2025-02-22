@@ -17,6 +17,9 @@ export default {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
+		  backgroundImage: {
+			'radial-gradient': 'radial-gradient(circle at 50% 50%, transparent 20%, #feecd1 90%)'
+		  },
   		colors: {}
   	}
   },
