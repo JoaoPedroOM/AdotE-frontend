@@ -1,7 +1,10 @@
 import { useState } from "react";
 import chorome from "../../assets/img/chrome.png";
 import { Link, useNavigate } from "react-router";
-import { Link as ScrollLink } from "react-scroll";
+
+// import { Link as ScrollLink } from "react-scroll";
+import { HashLink } from 'react-router-hash-link';
+
 import perfil from "../../assets/img/UserPerfil.png"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -77,14 +80,13 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="cursor-pointer md:w-auto w-full">
-              <ScrollLink
-                to="sobre"
-                smooth={true}
-                duration={500}
-                className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
-              >
-                Sobre Nós
-              </ScrollLink>
+            <HashLink
+          smooth
+          to="/#sobre"
+          className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
+        >
+          Sobre Nós
+        </HashLink>
             </li>
             {isLoggedIn ? (
               <div className="md:w-auto w-full md:px-3">
