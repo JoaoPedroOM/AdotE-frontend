@@ -1,4 +1,5 @@
 import { Organizacao } from './organizacao';
+import {Fotos} from "./fotos"
 
 export interface Animal {
   nome: string;
@@ -6,4 +7,5 @@ export interface Animal {
   porte: "PEQUENO" | "MÉDIO" | "GRANDE";
   vacinado: boolean;
   organizacao: Organizacao;
+  fotos: Fotos[];
 }

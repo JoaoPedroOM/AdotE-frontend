@@ -161,10 +161,10 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
               }}
             />
             <div className="mt-4 grid grid-cols-3 gap-2">
-              {watch("fotos")?.map((foto: any, index: any) => (
+              {animal?.fotos.map((foto: any, index: any) => (
                 <div key={index} className="relative">
                   <img
-                    src={foto}
+                    src={foto.url}
                     alt={`Foto ${index + 1}`}
                     className="w-full h-32 object-cover rounded-md"
                   />

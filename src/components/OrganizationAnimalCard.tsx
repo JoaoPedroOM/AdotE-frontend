@@ -10,12 +10,13 @@ import FormEdit from "./FormEdit";
 import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "./ui/badge";
 import { Heart } from "lucide-react";
-// import { ImageSwiper } from "../components/ui/image-swiper";
+import { ImageSwiper } from "../components/ui/image-swiper";
 // import { Link } from "react-router";
 
 
 const OrganizationAnimalCard = ({ animal }: { animal: Animal }) => {
   const [localizacao, setLocalizacao] = useState<string>("");
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
     const buscarLocalizacao = async () => {
@@ -32,16 +33,22 @@ const OrganizationAnimalCard = ({ animal }: { animal: Animal }) => {
       }
     };
 
+    const extrairUrls = () => {
+      const urls = animal.fotos.map(foto => foto.url);
+      setImageUrls(urls);
+    };
+
     buscarLocalizacao();
+    extrairUrls();
   }, [animal.organizacao.cep]);
 
   return (
     <Card
     className="text-neutral-900 rounded-lg shadow-lg overflow-hidden max-w-[350px]"
   >
-    {/* <div className="max-w-[400px] mx-auto">
-      <ImageSwiper images={animal.url_foto} />
-    </div> */}
+    <div className="max-w-[400px] mx-auto">
+      <ImageSwiper images={imageUrls} />
+    </div>
     <CardContent className="p-4">
         <div className="mt-4">
           <div className="flex justify-between">
