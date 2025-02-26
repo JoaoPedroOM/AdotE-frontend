@@ -14,8 +14,7 @@ const Dashboard = () => {
   const { 
     data: animais = [], 
     isLoading,
-    error,
-    refetch
+    error
   } = useQuery({
     queryKey: ['animais', organizacao?.organizacao_id],
     queryFn: () => animaisCadastrados(organizacao?.organizacao_id),
