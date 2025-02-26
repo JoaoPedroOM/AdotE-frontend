@@ -3,20 +3,32 @@ import { AppRoutes } from "./app.routes";
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import Cookies from "js-cookie";
+import { getTokenPayload } from "@/utils/authUtils";
+import {
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 
 export function Routes() {
   const { islogin } = useAuthStore();
+  const queryClient = new QueryClient();
 
   useEffect(() => {
     const token = Cookies.get("authToken");
     if (token) {
-      islogin(token); 
+      const userData = getTokenPayload(token);
+      islogin(token, {
+        organizacao_id: userData.organizacao_id,
+        organizacao_name: userData.organizacao_name,
+      });
     }
   }, [islogin]);
 
   return (
     <BrowserRouter>
-      <AppRoutes />
+      <QueryClientProvider client={queryClient}>
+        <AppRoutes />
+      </QueryClientProvider>
     </BrowserRouter>
   );
 }

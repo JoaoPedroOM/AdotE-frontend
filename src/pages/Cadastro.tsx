@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, useForm } from "react-hook-form";
 import { Link } from "react-router";
 
-import chorome from "../assets/img/chrome.png";
+import logo from "../assets/img/chrome.png";
 import { Label } from "@/components/ui/label";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -27,22 +27,20 @@ const Cadastro = () => {
   async function onSubmit(data: FieldValues) {
     console.log("Form dados:", data);
     const email = data.email;
-    const password = data.password;
-    const role = "ORGANIZATION";
-    const name = data.organizationName;
+    const senha = data.password;
+    const nome = data.organizationName;
     const cnpj = data.cnpj.replace(/\D/g, "");
-    const postalCode = data.cep.replace(/\D/g, "");
-    const phoneNumber = data.phone.replace(/\D/g, "");
+    const cep = data.cep.replace(/\D/g, "");
+    const numero = data.phone.replace(/\D/g, "");
 
     try {
       await cadastroAndLogin(
         email,
-        password,
-        role,
-        name,
+        senha,
+        nome,
         cnpj,
-        postalCode,
-        phoneNumber
+        cep,
+        numero
       );
 
       reset({
@@ -70,7 +68,7 @@ const Cadastro = () => {
           to="/"
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
-          <img src={chorome} className="h-8" alt="Adota Logo" />
+          <img src={logo} className="h-8" alt="Adota Logo" />
           <span className="self-center text-2xl font-bold font-main whitespace-nowrap text-black">
             Adotar
           </span>

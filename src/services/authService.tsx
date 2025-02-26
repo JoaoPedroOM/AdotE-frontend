@@ -6,9 +6,9 @@ const api = axios.create({
   withCredentials: true,
 });
 
-export const loginService = async (email: string, password: string) => {
+export const loginService = async (email: string, senha: string) => {
   try {
-    const response = await api.post("/auth/login", { email, password });
+    const response = await api.post("/adote/auth/login", { email, senha });
     return response.data;
   } catch (error: any) {
     console.error(
@@ -21,22 +21,20 @@ export const loginService = async (email: string, password: string) => {
 
 export const cadastroService = async (
   email: string,
-  password: string,
-  role: string,
-  name: string,
+  senha: string,
+  nome: string,
   cnpj: string,
-  postalCode: string,
-  phoneNumber: string
+  cep: string,
+  numero: string
 ) => {
   try {
-    const response = await api.post("/auth/register/organization", {
+    const response = await api.post("/adote/auth/register", {
       email,
-      password,
-      role,
-      name,
+      senha,
+      nome,
       cnpj,
-      postalCode,
-      phoneNumber,
+      cep,
+      numero,
     });
     return response.data;
   } catch (error: any) {

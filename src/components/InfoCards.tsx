@@ -5,7 +5,7 @@ import {
     CardTitle,
   } from "../components/ui/card";
   
-  const InforCards = () => {
+  const InforCards = ({animais} : any) => {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
         <Card>
@@ -15,7 +15,7 @@ import {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
+            <div className="text-2xl font-bold">{animais}</div>
           </CardContent>
         </Card>
         <Card>

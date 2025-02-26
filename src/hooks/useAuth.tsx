@@ -6,28 +6,37 @@ import {
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { getTokenPayload } from "@/utils/authUtils";
 
 export const useAuth = () => {
   const [error, setError] = useState<string | null>(null);
   const { islogin, islogout } = useAuthStore();
 
   useEffect(() => {
-    const savedToken = Cookies.get('authToken');
+    const savedToken = Cookies.get("authToken");
     if (savedToken) {
-      islogin(savedToken); 
+      const userData = getTokenPayload(savedToken);
+      islogin(savedToken, {
+        organizacao_id: userData.organizacao_id,
+        organizacao_name: userData.organizacao_name,
+      });
     }
   }, [islogin]);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, senha: string) => {
     try {
-      const data = await loginService(email, password);
+      const data = await loginService(email, senha);
 
       Cookies.set("authToken", data.token, {
         expires: 7,
         secure: true,
         sameSite: "Strict",
       });
-      islogin(data.token);
+      const userData = getTokenPayload(data.token);
+      islogin(data.token, {
+        organizacao_id: userData.organizacao_id,
+        organizacao_name: userData.organizacao_name,
+      });
       setError(null);
     } catch (err: any) {
       const errorMessage =
@@ -39,24 +48,15 @@ export const useAuth = () => {
 
   const cadastroAndLogin = async (
     email: string,
-    password: string,
-    role: string,
-    name: string,
+    senha: string,
+    nome: string,
     cnpj: string,
-    postalCode: string,
-    phoneNumber: string
+    cep: string,
+    numero: string
   ) => {
     try {
-      await cadastroService(
-        email,
-        password,
-        role,
-        name,
-        cnpj,
-        postalCode,
-        phoneNumber
-      );
-      await login(email, password);
+      await cadastroService(email, senha, nome, cnpj, cep, numero);
+      await login(email, senha);
     } catch (err: any) {
       const errorMessage =
         err?.response?.data?.message || "Erro ao cadastrar. Tente novamente.";
