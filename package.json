@@ -10,6 +10,10 @@
     "preview": "vite preview",
     "vercel-install": "npm install --legacy-peer-deps"
   },
+   "overrides": {
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
   "dependencies": {
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^4.1.0",
