@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "vercel-install": "npm install --legacy-peer-deps"
+    "vercel-install": "npm install --legacy-peer-deps --force"
   },
    "overrides": {
     "react": "19.0.0",
