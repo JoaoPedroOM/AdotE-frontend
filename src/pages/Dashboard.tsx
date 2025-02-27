@@ -29,8 +29,8 @@ const Dashboard = () => {
         <main className="p-4 text-white mx-auto max-w-[1200px]">
           <div className="mb-5 flex justify-between">
             <div>
-              <h1 className="font-main font-semibold text-black text-[22px]">
-                Bem vindo, {organizacao?.organizacao_name} 👋
+              <h1 className="font-main font-semibold text-black sm:text-[22px] text-base">
+                Bem vindo, <br className="sm:hidden block"/>{organizacao?.organizacao_name} 👋
               </h1>
               <p className="text-gray-700 font-tertiary text-[14px]">
                 Aqui está a análise completa dos seus animais!
@@ -41,9 +41,9 @@ const Dashboard = () => {
           </div>
 
           {isLoading ? (
-            <div className="grid md:gap-[50px] gap-5 md:grid-cols-2 lg:grid-cols-4 mb-8">
-              <Skeleton className="h-[110px] w-[288px] rounded-lg shadow-sm" />
-              <Skeleton className="h-[110px] w-[288px] rounded-lg shadow-sm" />
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+              <Skeleton className="h-[110px] w-full rounded-lg shadow-sm" />
+              <Skeleton className="h-[110px] w-full rounded-lg shadow-sm" />
             </div>
           ) : (
             <InforCards animais={animais.length} />
