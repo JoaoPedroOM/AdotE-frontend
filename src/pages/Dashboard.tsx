@@ -11,15 +11,15 @@ import { useQuery } from "@tanstack/react-query";
 const Dashboard = () => {
   const { organizacao } = useAuthStore();
 
-  const { 
-    data: animais = [], 
+  const {
+    data: animais = [],
     isLoading,
-    error
+    error,
   } = useQuery({
-    queryKey: ['animais', organizacao?.organizacao_id],
+    queryKey: ["animais", organizacao?.organizacao_id],
     queryFn: () => animaisCadastrados(organizacao?.organizacao_id),
-    enabled: !!organizacao?.organizacao_id, 
-    staleTime: 20 * 60 * 1000, 
+    enabled: !!organizacao?.organizacao_id,
+    staleTime: 20 * 60 * 1000,
   });
 
   return (
@@ -40,14 +40,22 @@ const Dashboard = () => {
             <AnimaisCadastro />
           </div>
 
-          {/* Detalhes da ornanização */}
-          <InforCards animais={animais.length} />
+          {isLoading ? (
+            <div className="grid md:gap-[50px] gap-5 md:grid-cols-2 lg:grid-cols-4 mb-8">
+              <Skeleton className="h-[110px] w-[288px] rounded-lg shadow-sm" />
+              <Skeleton className="h-[110px] w-[288px] rounded-lg shadow-sm" />
+            </div>
+          ) : (
+            <InforCards animais={animais.length} />
+          )}
 
-          {/* Exibe os cards dos animais */}
-          <AnimalDetails animais={animais} />
-          {isLoading  && <Skeleton className="h-[400px] w-[350px] rounded-lg shadow-sm" />}
+          <AnimalDetails animais={animais} carregando={isLoading} />
 
-          {error && <p className="text-red-500">{(error as Error).message || "Erro ao carregar animais."}</p>}
+          {error && (
+            <p className="text-red-500">
+              {(error as Error).message || "Erro ao carregar animais."}
+            </p>
+          )}
         </main>
       </div>
     </div>
