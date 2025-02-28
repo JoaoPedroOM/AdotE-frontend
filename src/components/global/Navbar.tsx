@@ -73,7 +73,7 @@ const Navbar = () => {
           <ul className="font-normal items-center text-[20px] uppercase flex flex-col p-4 md:p-0 mt-4 border md:border-none border-[#FDBA74]  rounded-lg md:bg-transparent bg-[#FED7AA] md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 ">
             <li className="md:w-auto w-full">
               <Link
-                to="/"
+                to="/adote"
                 className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
               >
                 Adotar

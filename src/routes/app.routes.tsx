@@ -8,6 +8,7 @@ import Dashboard from "@/pages/Dashboard";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
 import NotFound from "@/pages/NotFound";
+import Adote from "@/pages/Adote";
 
 export function AppRoutes() {
   return (
@@ -18,6 +19,15 @@ export function AppRoutes() {
         element={
           <>
             <App />
+            <Footer />
+          </>
+        }
+      />
+      <Route
+        path="/adote"
+        element={
+          <>
+            <Adote />
             <Footer />
           </>
         }
