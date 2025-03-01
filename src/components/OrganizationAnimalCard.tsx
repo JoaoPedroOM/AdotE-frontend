@@ -40,7 +40,7 @@ const OrganizationAnimalCard = ({ animal }: { animal: Animal }) => {
 
     buscarLocalizacao();
     extrairUrls();
-  }, [animal.organizacao.cep]);
+  }, [animal]);
 
   return (
     <Card

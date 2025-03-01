@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -8,12 +8,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-
+import { toast } from "sonner";
 import { ErrorMessage } from "@hookform/error-message";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { AnimalFormValues, animalSchema } from "@/schemas/cadastroSchema";
 import type { Animal } from "@/models/animal";
+import { deleteAnimalService } from "@/services/animalService";
+import { useQueryClient } from "@tanstack/react-query";
+import { usePaginationStore } from "@/stores/usePaginationStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 interface FormEditProps {
   animal: Animal | null;
@@ -21,6 +25,7 @@ interface FormEditProps {
 }
 
 const FormEdit = ({ animal, localizacao }: FormEditProps) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const {
     register,
     handleSubmit,
@@ -30,12 +35,20 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
   } = useForm<AnimalFormValues>({
     resolver: zodResolver(animalSchema),
   });
+  const { organizacao } = useAuthStore();
+
+  const {
+    currentPage: page,
+    setCurrentPage: setPage,
+    animalLength,
+  } = usePaginationStore();
+  const queryClient = useQueryClient();
 
   // Atualiza os valores do formulário quando recebe um novo animal
   useEffect(() => {
     if (animal) {
       setValue("nome", animal.nome);
-      setValue("sexo", animal.sexo === "MACHO" ? "Macho" : "Fêmea");
+      setValue("sexo", animal.sexo === "MACHO" ? "Macho" : "Femea");
       setValue(
         "porte",
         animal.porte === "PEQUENO"
@@ -52,8 +65,40 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
     console.log("DADOS DO FORMULÁRIO", data);
   }
 
+  async function deleteAnimal(animalId: number) {
+    if (animalLength === 1 && page > 0) {
+      try {
+        setPage(page - 1); 
+        await deleteAnimalService(animalId);
+        toast.success("Seu animal foi excluído com sucesso!");
+        setIsDialogOpen(false);
+        
+        queryClient.invalidateQueries({
+          queryKey: ["animais", organizacao?.organizacao_id],
+        });
+
+      } catch (error) {
+        console.error("Erro ao deletar animal:", error);
+        toast.error("Erro ao excluir o animal.");
+      }
+    } else {
+      try {
+        await deleteAnimalService(animalId);
+        toast.success("Seu animal foi excluído com sucesso!");
+        setIsDialogOpen(false);
+
+        await queryClient.invalidateQueries({
+          queryKey: ["animais", organizacao?.organizacao_id, page],
+        });
+      } catch (error) {
+        console.error("Erro ao deletar animal:", error);
+        toast.error("Erro ao excluir o animal.");
+      }
+    }
+  }
+
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button variant="default">Editar</Button>
       </DialogTrigger>
@@ -97,7 +142,7 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
               {...register("sexo")}
             >
               <option value="Macho">Macho</option>
-              <option value="Fêmea">Fêmea</option>
+              <option value="Femea">Fêmea</option>
             </select>
             <ErrorMessage
               errors={errors}
@@ -201,14 +246,23 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
             />
           </div>
 
-          <Button
-            type="submit"
-            variant="default"
-            className="w-full"
-            disabled={isSubmitting}
-          >
-            Salvar alterações
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button
+              type="submit"
+              variant="default"
+              className="w-full"
+              disabled={isSubmitting}
+            >
+              Salvar alterações
+            </Button>
+            <Button
+              variant="destructive"
+              className="w-full"
+              onClick={() => deleteAnimal(animal!.id)}
+            >
+              Excluir animal
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

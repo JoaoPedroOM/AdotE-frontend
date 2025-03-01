@@ -3,8 +3,18 @@ import { Skeleton } from "../components/ui/skeleton";
 import { MessageSquare, PawPrint } from "lucide-react";
 import type { animaisProp } from "../types/animaisProp";
 import OrganizationAnimalCard from "./OrganizationAnimalCard";
+import { usePaginationStore } from "@/stores/usePaginationStore";
+import { useEffect } from "react";
 
 const AnimalDetails = ({ animais, carregando }: animaisProp) => {
+  const {setAnimalLength} = usePaginationStore()
+
+  useEffect(() => {
+    if (animais && !carregando) {
+      setAnimalLength(animais.length);
+    }
+  }, [animais, carregando, setAnimalLength]);
+
   return (
     <Tabs defaultValue="animals">
       <TabsList className="grid w-full grid-cols-2 mb-4">
@@ -29,8 +39,8 @@ const AnimalDetails = ({ animais, carregando }: animaisProp) => {
                 Sem animais até o momento.
               </p>
             ) : (
-              animais.map((animal, index) => (
-                <OrganizationAnimalCard animal={animal} key={index} />
+              animais.map((animal) => (
+                <OrganizationAnimalCard animal={animal} key={animal.id} />
               ))
             )}
           </div>

@@ -7,15 +7,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
+import { toast } from "sonner";
 
 import { ErrorMessage } from "@hookform/error-message";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, useForm } from "react-hook-form";
 
-import {
-  AnimalFormValues,
-  animalSchema,
-} from "@/schemas/cadastroSchema";
+import { AnimalFormValues, animalSchema } from "@/schemas/cadastroSchema";
 import { useState } from "react";
 import { useAnimal } from "@/hooks/useAnimal";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -29,9 +27,9 @@ const AnimaisCadastro = () => {
   const { organizacao } = useAuthStore();
   const queryClient = useQueryClient();
 
- const organizacao_id = Number(organizacao?.organizacao_id);
+  const organizacao_id = Number(organizacao?.organizacao_id);
 
-  const {cadastrarAnimal, error} = useAnimal();
+  const { cadastrarAnimal, error } = useAnimal();
 
   const {
     register,
@@ -69,10 +67,17 @@ const AnimaisCadastro = () => {
       const fotos = data.fotos;
       const sexoUpperCase = data.sexo.toUpperCase();
       const porteUpperCase = data.porte.toUpperCase();
-  
+
       if (fotos.length > 0) {
-        await cadastrarAnimal(data.nome, sexoUpperCase, porteUpperCase, data.vacinado, fotos, organizacao_id);
-      
+        await cadastrarAnimal(
+          data.nome,
+          sexoUpperCase,
+          porteUpperCase,
+          data.vacinado,
+          fotos,
+          organizacao_id
+        );
+
         reset({
           nome: "",
           fotos: [],
@@ -80,14 +85,20 @@ const AnimaisCadastro = () => {
         setFiles([]);
         setPreviewUrls([]);
 
-        queryClient.invalidateQueries({ queryKey: ['animais', organizacao_id] });
+        toast("Seu animal foi cadastrado com sucesso!", {
+          description: "Agora, seu animal já está na nossa base de dados.",
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: ["animais", organizacao_id],
+        });
       } else {
         console.error("Nenhuma foto foi selecionada.");
       }
     } catch (error) {
       console.error("Erro ao cadastrar animal:", error);
     }
-    
+
     console.log("Dados do formulário:", data);
     reset({
       nome: "",
@@ -96,7 +107,7 @@ const AnimaisCadastro = () => {
     setFiles([]);
     setPreviewUrls([]);
   }
-
+  
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DialogTrigger asChild>

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const animalSchema = z.object({
   nome: z.string().min(1, "O nome é obrigatório"), 
-  sexo: z.enum(["Macho", "Fêmea"], { errorMap: () => ({ message: "O sexo é obrigatório" }) }),
+  sexo: z.enum(["Macho", "Femea"], { errorMap: () => ({ message: "O sexo é obrigatório" }) }),
   porte: z.enum(["Pequeno", "Medio", "Grande"], { errorMap: () => ({ message: "O porte é obrigatório" }) }),
   vacinado: z.boolean().optional(),
   localizacao: z.string().optional(),

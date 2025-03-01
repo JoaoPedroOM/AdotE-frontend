@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: "http://localhost:8080",
   withCredentials: true,
 });
 
@@ -54,15 +54,35 @@ export const cadastroAnimalService = async (formData: FormData) => {
   }
 };
 
-export const animaisCadastrados = async (id: any) => {
+export const animaisCadastrados = async (id: any, page: number) => {
   const token = Cookies.get("authToken");
 
   try {
-    const response = await api.get(`/animal/find/all?orgId=${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.get(
+      `/animal/find/all?orgId=${id}&page=${page}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteAnimalService = async (id: number) => {
+  const token = Cookies.get("authToken");
+
+  try {
+    const response = await api.delete(`/animal/delete?animalId=${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     throw error;

@@ -20,7 +20,6 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const {isLoggedIn, islogout} = useAuthStore();
 
-  console.log(isLoggedIn);
   const navigate = useNavigate();
 
   const handleLogout = () => {
