@@ -1,3 +1,7 @@
+import { useState } from "react";
+import Navbar from "@/components/global/Navbar";
+import AnimalCard from "@/components/AnimalCard";
+
 import { Card } from "../components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -8,9 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import Navbar from "@/components/global/Navbar";
+import { Skeleton } from "../components/ui/skeleton";
 import { Filter, MapPin } from "lucide-react";
-import { useState } from "react";
+
+import { useQuery } from "@tanstack/react-query";
+import { animaisDisponiveis } from "@/services/animalService";
+import type { Animal } from "../models/animal";
+
 
 const Adote = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -18,6 +26,18 @@ const Adote = () => {
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);
   };
+
+  const {
+    data: animais = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["allAnimals"],
+    queryFn: () => animaisDisponiveis(),
+    staleTime: 20 * 60 * 1000,
+  });
+
+  console.log(animais);
 
   return (
     <div className="bg-radial-gradient h-full w-full">
@@ -50,7 +70,7 @@ const Adote = () => {
               </div>
             </div>
             {isFilterOpen && (
-            <Card className="p-4 border rounded-lg shadow-sm fade-in">
+              <Card className="p-4 border rounded-lg shadow-sm fade-in">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
                     <Label
@@ -60,7 +80,10 @@ const Adote = () => {
                       Localização
                     </Label>
                     <Select value="" onValueChange={() => {}}>
-                      <SelectTrigger id="location-filter" className="w-full z-[500]">
+                      <SelectTrigger
+                        id="location-filter"
+                        className="w-full z-[500]"
+                      >
                         <div className="flex items-center gap-2">
                           <MapPin className="h-4 w-4 text-muted-foreground" />
                           <SelectValue placeholder="Todas as localizações" />
@@ -82,7 +105,10 @@ const Adote = () => {
                       Tipo de Animal
                     </Label>
                     <Select value="" onValueChange={() => {}}>
-                      <SelectTrigger id="type-filter" className="w-ful z-[500]l">
+                      <SelectTrigger
+                        id="type-filter"
+                        className="w-ful z-[500]l"
+                      >
                         <SelectValue placeholder="Todos os tipos" />
                       </SelectTrigger>
                       <SelectContent className="z-[500]">
@@ -116,13 +142,14 @@ const Adote = () => {
                       Porte
                     </Label>
                     <Select value="" onValueChange={() => {}}>
-                      <SelectTrigger id="size-filter" className="w-full z-[500]">
+                      <SelectTrigger
+                        id="size-filter"
+                        className="w-full z-[500]"
+                      >
                         <SelectValue placeholder="Todos os tamanhos" />
                       </SelectTrigger>
                       <SelectContent className="z-[500]">
-                        <SelectItem value="allSize">
-                          Todos os portes
-                        </SelectItem>
+                        <SelectItem value="allSize">Todos os portes</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -135,7 +162,10 @@ const Adote = () => {
                       Gênero
                     </Label>
                     <Select value="" onValueChange={() => {}}>
-                      <SelectTrigger id="gender-filter" className="w-full z-[500]">
+                      <SelectTrigger
+                        id="gender-filter"
+                        className="w-full z-[500]"
+                      >
                         <SelectValue placeholder="Todos os gêneros" />
                       </SelectTrigger>
                       <SelectContent className="z-[500]">
@@ -150,8 +180,30 @@ const Adote = () => {
 
           {/* Cards */}
           <section className="mt-5">
-            dasda
+            {isLoading ? (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+              </div>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                {animais.animals?.map((animal : Animal) => (
+                  <AnimalCard key={animal.id} animal={animal} />
+                ))}
+              </div>
+            )}
           </section>
+          {error && (
+            <p className="text-red-500">
+              {(error as Error).message || "Erro ao carregar animais."}
+            </p>
+          )}
         </main>
       </div>
     </div>

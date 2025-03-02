@@ -88,3 +88,12 @@ export const deleteAnimalService = async (id: number) => {
     throw error;
   }
 };
+
+export const animaisDisponiveis = async () => {
+  try {
+    const response = await api.get(`/animal/find/all`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

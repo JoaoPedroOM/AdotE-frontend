@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, useForm } from "react-hook-form";
 import { Link } from "react-router";
 
-import logo from "../assets/img/chrome.png";
+import logo from "../assets/img/logo2.png";
 import { Label } from "@/components/ui/label";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -68,9 +68,9 @@ const Cadastro = () => {
           to="/"
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
-          <img src={logo} className="h-8" alt="Adota Logo" />
+          <img src={logo} className="h-10" alt="Adota Logo" />
           <span className="self-center text-2xl font-bold font-main whitespace-nowrap text-black">
-            Adotar
+          AdotE
           </span>
         </Link>
         <div className="text-center mb-[30px] text-black">

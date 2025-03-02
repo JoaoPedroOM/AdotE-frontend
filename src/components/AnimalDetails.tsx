@@ -32,7 +32,7 @@ const AnimalDetails = ({ animais, carregando }: animaisProp) => {
         {carregando ? (
           <Skeleton className="h-[400px] w-[350px] rounded-lg shadow-sm" />
         ) : (
-          <div className="w-full grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-8">
+          <div className="w-full grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-8 justify-items-center">
             {/* Map para criação de cards para todos animais */}
             {animais.length === 0 ? (
               <p className="text-gray-700 font-semibold text-xl w-full">

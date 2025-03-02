@@ -65,10 +65,6 @@ const Dashboard = () => {
           <AnimalDetails animais={animais.animals} carregando={isLoading} />
 
           {/* Paginação */}
-          {isLoading ? (
-            <p>Carregando paginação</p>
-          ) : (
-            <>
               {animais.totalPages > 1 && (
                 <Pagination className="my-5">
                   <PaginationContent>
@@ -123,8 +119,7 @@ const Dashboard = () => {
                   </PaginationContent>
                 </Pagination>
               )}
-            </>
-          )}
+
           {error && (
             <p className="text-red-500">
               {(error as Error).message || "Erro ao carregar animais."}
