@@ -9,6 +9,7 @@ import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
 import NotFound from "@/pages/NotFound";
 import Adote from "@/pages/Adote";
+import AnimalProfile from "@/pages/AnimalProfile";
 
 export function AppRoutes() {
   return (
@@ -23,6 +24,17 @@ export function AppRoutes() {
           </>
         }
       />
+
+      <Route
+        path="/adote/perfil"
+        element={
+          <>
+            <AnimalProfile/>
+            <Footer />
+          </>
+        }
+      />
+
       <Route
         path="/adote"
         element={
