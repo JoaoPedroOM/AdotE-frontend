@@ -19,11 +19,14 @@ import { useAnimal } from "@/hooks/useAnimal";
 import { useAuthStore } from "@/stores/useAuthStore";
 
 import { useQueryClient } from "@tanstack/react-query";
+import { Separator } from "./ui/separator";
+import { Textarea } from "./ui/textarea";
 
 const AnimaisCadastro = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
+
   const { organizacao } = useAuthStore();
   const queryClient = useQueryClient();
 
@@ -63,17 +66,26 @@ const AnimaisCadastro = () => {
   };
 
   async function onSubmit(data: FieldValues) {
+    console.log("Dados do formulário:", data);
     try {
       const fotos = data.fotos;
       const sexoUpperCase = data.sexo.toUpperCase();
       const porteUpperCase = data.porte.toUpperCase();
+      const idadeUpperCase = data.idade.toUpperCase();
+      const tipoUpperCase = data.tipo.toUpperCase();
 
       if (fotos.length > 0) {
         await cadastrarAnimal(
           data.nome,
+          tipoUpperCase,
           sexoUpperCase,
           porteUpperCase,
+          idadeUpperCase,
           data.vacinado,
+          data.castrado,
+          data.vermifugado,
+          data.srd,
+          data.descricao,
           fotos,
           organizacao_id
         );
@@ -81,6 +93,7 @@ const AnimaisCadastro = () => {
         reset({
           nome: "",
           fotos: [],
+          descricao: "",
         });
         setFiles([]);
         setPreviewUrls([]);
@@ -103,11 +116,12 @@ const AnimaisCadastro = () => {
     reset({
       nome: "",
       fotos: [],
+      descricao: "",
     });
     setFiles([]);
     setPreviewUrls([]);
   }
-  
+
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DialogTrigger asChild>
@@ -118,7 +132,7 @@ const AnimaisCadastro = () => {
           Cadastrar
         </Button>
       </DialogTrigger>
-      <DialogContent className="z-[999] max-w-lg mx-auto p-8 bg-white rounded-lg shadow-lg">
+      <DialogContent className="z-[999] max-w-[750px] w-full mx-auto px-5 py-8 bg-white rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-gray-900">
             Cadastro de Animal
@@ -128,7 +142,7 @@ const AnimaisCadastro = () => {
           </DialogDescription>
         </DialogHeader>
 
-        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        <form className="space-y-3" onSubmit={handleSubmit(onSubmit)}>
           {/* Campos de nome, sexo, porte, vacinado */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
@@ -146,55 +160,159 @@ const AnimaisCadastro = () => {
             </p>
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Sexo
-            </label>
-            <select
-              id="sexo"
-              className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
-              {...register("sexo")}
-            >
-              <option value="Macho">Macho</option>
-              <option value="Femea">Fêmea</option>
-            </select>
+          <div className="grid grid-cols-2 md:gap-3 gap-1">
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Tipo de Animal
+              </label>
+              <select
+                id="tipo"
+                className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("tipo")}
+              >
+                <option value="Cachorro">Cachorro</option>
+                <option value="Gato">Gato</option>
+              </select>
 
-            <p className="text-xs font-semibold text-red-700 mt-1">
-              <ErrorMessage errors={errors} name="sexo" />
-            </p>
+              <p className="text-xs font-semibold text-red-700 mt-1">
+                <ErrorMessage errors={errors} name="tipo" />
+              </p>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Idade
+              </label>
+              <select
+                id="idade"
+                className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("idade")}
+              >
+                <option value="Filhote">Filhote</option>
+                <option value="Jovem">Jovem</option>
+                <option value="Adulto">Adulto</option>
+                <option value="Idoso">Idoso</option>
+              </select>
+
+              <p className="text-xs font-semibold text-red-700 mt-1">
+                <ErrorMessage errors={errors} name="idade" />
+              </p>
+            </div>
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Porte
-            </label>
-            <select
-              id="porte"
-              className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
-              {...register("porte")}
-            >
-              <option value="Pequeno">Pequeno</option>
-              <option value="Medio">Médio</option>
-              <option value="Grande">Grande</option>
-            </select>
+          <div className="grid grid-cols-2 md:gap-3 gap-1">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Sexo
+              </label>
+              <select
+                id="sexo"
+                className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("sexo")}
+              >
+                <option value="Macho">Macho</option>
+                <option value="Femea">Fêmea</option>
+              </select>
 
-            <p className="text-xs font-semibold text-red-700 mt-1">
-              <ErrorMessage errors={errors} name="porte" />
-            </p>
+              <p className="text-xs font-semibold text-red-700 mt-1">
+                <ErrorMessage errors={errors} name="sexo" />
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Porte
+              </label>
+              <select
+                id="porte"
+                className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("porte")}
+              >
+                <option value="Pequeno">Pequeno</option>
+                <option value="Medio">Médio</option>
+                <option value="Grande">Grande</option>
+              </select>
+
+              <p className="text-xs font-semibold text-red-700 mt-1">
+                <ErrorMessage errors={errors} name="porte" />
+              </p>
+            </div>
           </div>
 
-          <div className="mb-4">
+          {/* Vacinação */}
+          <div className="flex items-center gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Vacinado
+              </label>
+              <input
+                type="checkbox"
+                id="vacinado"
+                className="h-4 w-4 rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("vacinado")}
+              />
+              <p className="text-xs font-semibold text-red-700 mt-1">
+                <ErrorMessage errors={errors} name="vacinado" />
+              </p>
+            </div>
+            <Separator orientation="vertical" className="h-8" />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Castrado
+              </label>
+              <input
+                type="checkbox"
+                id="castrado"
+                className="h-4 w-4 rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("castrado")}
+              />
+              <p className="text-xs font-semibold text-red-700 mt-1">
+                <ErrorMessage errors={errors} name="castrado" />
+              </p>
+            </div>
+            <Separator orientation="vertical" className="h-8" />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+              Vermifugação 
+              </label>
+              <input
+                type="checkbox"
+                id="vermifugado"
+                className="h-4 w-4 rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("vermifugado")}
+              />
+              <p className="text-xs font-semibold text-red-700 mt-1">
+                <ErrorMessage errors={errors} name="vermifugado" />
+              </p>
+            </div>
+            <Separator orientation="vertical" className="h-8" />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+              Sem Raça
+              </label>
+              <input
+                type="checkbox"
+                id="srd"
+                className="h-4 w-4 rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("srd")}
+              />
+              <p className="text-xs font-semibold text-red-700 mt-1">
+                <ErrorMessage errors={errors} name="srd" />
+              </p>
+            </div>
+          </div>
+
+          <div>
             <label className="block text-sm font-medium text-gray-700">
-              Vacinado
+              Descrição
             </label>
-            <input
-              type="checkbox"
-              id="vacinado"
-              className="h-4 w-4 rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
-              {...register("vacinado")}
+            <Textarea
+              {...register("descricao")}
+              id="descricao"
+              className="h-32 resize-none"
             />
             <p className="text-xs font-semibold text-red-700 mt-1">
-              <ErrorMessage errors={errors} name="vacinado" />
+              <ErrorMessage errors={errors} name="descricao" />
             </p>
           </div>
 

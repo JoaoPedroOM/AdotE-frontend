@@ -14,10 +14,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { AnimalFormValues, animalSchema } from "@/schemas/cadastroSchema";
 import type { Animal } from "@/models/animal";
-import { deleteAnimalService } from "@/services/animalService";
+import {deleteAnimalService} from "@/services/animalService";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePaginationStore } from "@/stores/usePaginationStore";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { Separator } from "./ui/separator";
+import { Textarea } from "./ui/textarea";
+import { useAnimal } from "@/hooks/useAnimal";
 
 interface FormEditProps {
   animal: Animal | null;
@@ -26,6 +29,12 @@ interface FormEditProps {
 
 const FormEdit = ({ animal, localizacao }: FormEditProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [originalValues, setOriginalValues] = useState<any>({});
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
+  const [newImages, setNewImages] = useState<File[]>([]);
+
+  const { atualizaAnimal } = useAnimal();
+
   const {
     register,
     handleSubmit,
@@ -35,48 +44,196 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
   } = useForm<AnimalFormValues>({
     resolver: zodResolver(animalSchema),
   });
-  const { organizacao } = useAuthStore();
 
+  const { organizacao } = useAuthStore();
   const {
     currentPage: page,
     setCurrentPage: setPage,
     animalLength,
   } = usePaginationStore();
+
   const queryClient = useQueryClient();
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   // Atualiza os valores do formulário quando recebe um novo animal
   useEffect(() => {
     if (animal) {
-      setValue("nome", animal.nome);
-      setValue("sexo", animal.sexo === "MACHO" ? "Macho" : "Femea");
-      setValue(
-        "porte",
-        animal.porte === "PEQUENO"
-          ? "Pequeno"
-          : animal.porte === "MÉDIO"
-          ? "Medio"
-          : "Grande"
-      );
-      setValue("vacinado", animal.vacinado);
+      // Set form values
+      const formValues = {
+        nome: animal.nome,
+        tipo: animal.tipo === "CACHORRO" ? "Cachorro" : "Gato",
+        idade:
+          animal.idade === "FILHOTE"
+            ? "Filhote"
+            : animal.idade === "JOVEM"
+            ? "Jovem"
+            : "Adulto",
+        sexo: animal.sexo === "MACHO" ? "Macho" : "Femea",
+        porte:
+          animal.porte === "PEQUENO"
+            ? "Pequeno"
+            : animal.porte === "MEDIO"
+            ? "Medio"
+            : "Grande",
+        vacinado: animal.vacinado,
+        castrado: animal.castrado,
+        vermifugado: animal.vermifugado,
+        srd: animal.srd,
+        descricao: animal.descricao,
+        fotos: animal.fotos.map((foto) => foto.url),
+      };
+
+      // Set form values
+      Object.entries(formValues).forEach(([key, value]) => {
+        setValue(key as any, value);
+      });
+
+      // Store original values for comparison later
+      setOriginalValues(formValues);
+
+      // Extract existing image URLs
+      const urls = animal.fotos.map((foto) => foto.url);
+      setImageUrls(urls);
+
+      // Reset image tracking states when dialog opens
+      setImagesToDelete([]);
+      setNewImages([]);
     }
-  }, [animal, setValue]);
+  }, [animal?.id, setValue, isDialogOpen]);
+
+  // Function to check what fields have changed
+  const getChangedFields = (data: AnimalFormValues) => {
+    const changedFields: Record<string, any> = {};
+  
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === "fotos") return;
+  
+      // Comparação direta sem JSON.stringify
+      if (value !== originalValues[key]) {
+        changedFields[key] = value;
+      }
+    });
+  
+    return changedFields;
+  };
+  
+
+  const convertToBackendValues = (changedFields: Record<string, any>) => {
+    const converted = { ...changedFields };
+    
+    if (converted.tipo) {
+      converted.tipo = converted.tipo === "Cachorro" ? "CACHORRO" : "GATO";
+    }
+    if (converted.sexo) {
+      converted.sexo = converted.sexo === "Macho" ? "MACHO" : "FEMEA";
+    }
+    if (converted.porte) {
+      converted.porte = converted.porte === "Pequeno" ? "PEQUENO" :
+        converted.porte === "Medio" ? "MEDIO" : "GRANDE";
+    }
+    if (converted.idade) {
+      converted.idade = converted.idade === "Filhote" ? "FILHOTE" :
+        converted.idade === "Jovem" ? "JOVEM" : "ADULTO";
+    }
+  
+    return converted;
+  };
 
   async function onSubmit(data: AnimalFormValues) {
-    console.log("DADOS DO FORMULÁRIO", data);
+    if (!animal) return;
+  
+    try {
+      const changedFields = getChangedFields(data);
+      
+      // Verifica se há alterações
+      const hasChanges = 
+        Object.keys(changedFields).length > 0 ||
+        newImages.length > 0 ||
+        imagesToDelete.length > 0;
+  
+      if (!hasChanges) {
+        toast.info("Nenhuma alteração detectada.");
+        setIsDialogOpen(false);
+        return;
+      }
+  
+      // Conversão para valores do backend
+      const backendChangedFields = convertToBackendValues(changedFields);
+      
+      await atualizaAnimal(
+        animal.id, 
+        backendChangedFields, 
+        newImages, 
+        imagesToDelete
+      );
+  
+      toast.success("Animal atualizado com sucesso!");
+      setIsDialogOpen(false);
+  
+      queryClient.invalidateQueries({
+        queryKey: ["animais", organizacao?.organizacao_id, page],
+      });
+    } catch (error) {
+      console.error("Erro ao atualizar animal:", error);
+      toast.error("Erro ao atualizar o animal.");
+    }
   }
+
+  // Handle file input change
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+
+    // Limit to 3 total images (existing + new)
+    const totalImagesCount =
+      imageUrls.length -
+      imagesToDelete.length +
+      newImages.length +
+      files.length;
+    if (totalImagesCount > 3) {
+      toast.error("Você pode ter no máximo 3 fotos no total.");
+      return;
+    }
+
+    const newFileUrls = files.map((file) => URL.createObjectURL(file));
+
+    setValue("fotos", [
+      ...(watch("fotos")?.filter((url : any) => !imagesToDelete.includes(url)) || []),
+      ...newFileUrls,
+    ]);
+    setNewImages((prev) => [...prev, ...files]);
+  };
+  const handleImageDelete = (index: number) => {
+    const currentImages = watch("fotos") || [];
+    const imageToRemove = currentImages[index];
+
+    if (originalValues.fotos?.includes(imageToRemove)) {
+      setImagesToDelete((prev) => [...prev, imageToRemove]);
+    } else {
+      const objectUrl = imageToRemove;
+      setNewImages((prev) =>
+        prev.filter((file) => URL.createObjectURL(file) !== objectUrl)
+      );
+
+      URL.revokeObjectURL(objectUrl);
+    }
+
+    setValue(
+      "fotos",
+      currentImages.filter((_ : any, i:any) => i !== index)
+    );
+  };
 
   async function deleteAnimal(animalId: number) {
     if (animalLength === 1 && page > 0) {
       try {
-        setPage(page - 1); 
+        setPage(page - 1);
         await deleteAnimalService(animalId);
         toast.success("Seu animal foi excluído com sucesso!");
         setIsDialogOpen(false);
-        
+
         queryClient.invalidateQueries({
           queryKey: ["animais", organizacao?.organizacao_id],
         });
-
       } catch (error) {
         console.error("Erro ao deletar animal:", error);
         toast.error("Erro ao excluir o animal.");
@@ -97,13 +254,25 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
     }
   }
 
+  useEffect(() => {
+    return () => {
+      if (watch("fotos")) {
+        watch("fotos").forEach((url : any) => {
+          if (url.startsWith("blob:")) {
+            URL.revokeObjectURL(url);
+          }
+        });
+      }
+    };
+  }, [watch]);
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button variant="default">Editar</Button>
       </DialogTrigger>
-      <DialogContent className="z-[999] max-w-lg mx-auto p-8 bg-white rounded-lg shadow-lg">
-        <DialogHeader>
+      <DialogContent className="z-[999] max-w-[750px] w-full mx-auto px-5 py-8 bg-white rounded-lg shadow-lg max-h-[90vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-xl font-semibold text-gray-900">
             Editar Informações do Animal
           </DialogTitle>
@@ -112,7 +281,10 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
           </DialogDescription>
         </DialogHeader>
 
-        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        <form
+          className="space-y-6 overflow-y-auto flex-grow px-1 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           {/* Nome */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -132,56 +304,176 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
             />
           </div>
 
+          <div className="grid grid-cols-2 md:gap-3 gap-1">
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Tipo de Animal
+              </label>
+              <select
+                id="tipo"
+                className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("tipo")}
+              >
+                <option value="Cachorro">Cachorro</option>
+                <option value="Gato">Gato</option>
+              </select>
+
+              <ErrorMessage
+                errors={errors}
+                name="tipo"
+                as="p"
+                className="text-xs font-semibold text-red-700 mt-1"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Idade
+              </label>
+              <select
+                id="idade"
+                className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("idade")}
+              >
+                <option value="Filhote">Filhote</option>
+                <option value="Jovem">Jovem</option>
+                <option value="Adulto">Adulto</option>
+                <option value="Idoso">Idoso</option>
+              </select>
+
+              <ErrorMessage
+                errors={errors}
+                name="idade"
+                as="p"
+                className="text-xs font-semibold text-red-700 mt-1"
+              />
+            </div>
+          </div>
+
           {/* Sexo */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Sexo
-            </label>
-            <select
-              className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
-              {...register("sexo")}
-            >
-              <option value="Macho">Macho</option>
-              <option value="Femea">Fêmea</option>
-            </select>
-            <ErrorMessage
-              errors={errors}
-              name="sexo"
-              as="p"
-              className="text-xs font-semibold text-red-700 mt-1"
-            />
+          <div className="grid grid-cols-2 md:gap-3 gap-1">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Sexo
+              </label>
+              <select
+                id="sexo"
+                className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("sexo")}
+              >
+                <option value="Macho">Macho</option>
+                <option value="Femea">Fêmea</option>
+              </select>
+
+              <ErrorMessage
+                errors={errors}
+                name="sexo"
+                as="p"
+                className="text-xs font-semibold text-red-700 mt-1"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Porte
+              </label>
+              <select
+                id="porte"
+                className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("porte")}
+              >
+                <option value="Pequeno">Pequeno</option>
+                <option value="Medio">Médio</option>
+                <option value="Grande">Grande</option>
+              </select>
+
+              <ErrorMessage
+                errors={errors}
+                name="porte"
+                as="p"
+                className="text-xs font-semibold text-red-700 mt-1"
+              />
+            </div>
           </div>
 
-          {/* Porte */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Porte
-            </label>
-            <select
-              className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
-              {...register("porte")}
-            >
-              <option value="Pequeno">Pequeno</option>
-              <option value="Medio">Médio</option>
-              <option value="Grande">Grande</option>
-            </select>
-            <ErrorMessage
-              errors={errors}
-              name="porte"
-              as="p"
-              className="text-xs font-semibold text-red-700 mt-1"
-            />
+          {/* Vacinação */}
+          <div className="flex items-center gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Vacinado
+              </label>
+              <input
+                type="checkbox"
+                id="vacinado"
+                className="h-4 w-4 rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
+                checked={watch("vacinado")}
+                {...register("vacinado")}
+              />
+              <p className="text-xs font-semibold text-red-700 mt-1">
+                <ErrorMessage errors={errors} name="vacinado" />
+              </p>
+            </div>
+            <Separator orientation="vertical" className="h-8" />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Castrado
+              </label>
+              <input
+                type="checkbox"
+                id="castrado"
+                className="h-4 w-4 rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("castrado")}
+              />
+              <p className="text-xs font-semibold text-red-700 mt-1">
+                <ErrorMessage errors={errors} name="castrado" />
+              </p>
+            </div>
+            <Separator orientation="vertical" className="h-8" />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Vermifugação
+              </label>
+              <input
+                type="checkbox"
+                id="vermifugado"
+                className="h-4 w-4 rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("vermifugado")}
+              />
+              <p className="text-xs font-semibold text-red-700 mt-1">
+                <ErrorMessage errors={errors} name="vermifugado" />
+              </p>
+            </div>
+            <Separator orientation="vertical" className="h-8" />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Sem Raça
+              </label>
+              <input
+                type="checkbox"
+                id="srd"
+                className="h-4 w-4 rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
+                {...register("srd")}
+              />
+              <p className="text-xs font-semibold text-red-700 mt-1">
+                <ErrorMessage errors={errors} name="srd" />
+              </p>
+            </div>
           </div>
 
-          {/* Vacinado */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Vacinado
+              Descrição
             </label>
-            <input
-              type="checkbox"
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              {...register("vacinado")}
+            <Textarea
+              id="descricao"
+              className="h-32 resize-none"
+              {...register("descricao")}
+            />
+            <ErrorMessage
+              errors={errors}
+              name="descricao"
+              as="p"
+              className="text-xs font-semibold text-red-700 mt-1"
             />
           </div>
 
@@ -195,35 +487,24 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
               accept="image/*"
               className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
               multiple
-              onChange={(e) => {
-                const files = Array.from(e.target.files || []);
-                if (files.length > 3) {
-                  alert("Você pode adicionar no máximo 3 fotos.");
-                  return;
-                }
-                const newFotos = files.map((file) => URL.createObjectURL(file));
-                setValue("fotos", [...(watch("fotos") || []), ...newFotos]);
-              }}
+              onChange={handleFileChange}
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Máximo de 3 fotos no total.
+            </p>
             <div className="mt-4 grid grid-cols-3 gap-2">
-              {animal?.fotos.map((foto: any, index: any) => (
+              {(watch("fotos") || []).map((foto : any, index : any) => (
                 <div key={index} className="relative">
                   <img
-                    src={foto.url}
+                    src={foto}
                     alt={`Foto ${index + 1}`}
                     className="w-full h-32 object-cover rounded-md"
                   />
                   <Button
+                    type="button"
                     variant="destructive"
-                    onClick={() => {
-                      setValue(
-                        "fotos",
-                        watch("fotos")?.filter(
-                          (_: any, i: any) => i !== index
-                        ) || []
-                      );
-                    }}
-                    className="absolute top-2 right-2 text-xs"
+                    onClick={() => handleImageDelete(index)}
+                    className="absolute top-2 right-2 text-xs p-1 h-6"
                   >
                     Excluir
                   </Button>
@@ -253,12 +534,14 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
               className="w-full"
               disabled={isSubmitting}
             >
-              Salvar alterações
+              {isSubmitting ? "Salvando..." : "Salvar alterações"}
             </Button>
             <Button
+              type="button"
               variant="destructive"
               className="w-full"
-              onClick={() => deleteAnimal(animal!.id)}
+              onClick={() => animal && deleteAnimal(animal.id)}
+              disabled={isSubmitting}
             >
               Excluir animal
             </Button>

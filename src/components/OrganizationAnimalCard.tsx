@@ -62,7 +62,7 @@ const OrganizationAnimalCard = ({ animal }: { animal: Animal }) => {
               </h2>
             </>
             {/* Abre formulario com as informações do card para editar */}
-              <FormEdit animal={animal} localizacao={localizacao}/>
+              <FormEdit key={animal?.id} animal={animal} localizacao={localizacao}/>
           </div>
           <h2
             className={twMerge(

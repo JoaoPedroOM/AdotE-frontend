@@ -54,6 +54,22 @@ export const cadastroAnimalService = async (formData: FormData) => {
   }
 };
 
+export const updateAnimalService = async (animalId: number, formData: FormData) => {
+  const token = Cookies.get("authToken");
+
+  try {
+    const response = await api.patch(`/animal/update/${animalId}`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error en la petición:", error);
+    throw error;
+  }
+};
+
 export const animaisCadastrados = async (id: any, page: number) => {
   const token = Cookies.get("authToken");
 

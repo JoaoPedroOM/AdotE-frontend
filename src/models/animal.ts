@@ -4,9 +4,15 @@ import {Fotos} from "./fotos"
 export interface Animal {
   id: number;
   nome: string;
-  sexo: "MACHO" | "FÊMEA";
-  porte: "PEQUENO" | "MÉDIO" | "GRANDE";
+  tipo: "CACHORRO" | "GATO";
+  sexo: "MACHO" | "FEMEA";
+  porte: "PEQUENO" | "MEDIO" | "GRANDE";
+  idade: "FILHOTE" | "JOVEM" | "ADULTO" | "IDOSO";
   vacinado: boolean;
+  castrado: boolean;
+  vermifugado: boolean;
+  srd: boolean;
+  descricao: string;
   organizacao: Organizacao;
   fotos: Fotos[];
 }

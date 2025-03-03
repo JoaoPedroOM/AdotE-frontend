@@ -59,7 +59,7 @@ const Dashboard = () => {
               <Skeleton className="h-[110px] w-full rounded-lg shadow-sm" />
             </div>
           ) : (
-            <InforCards animais={animais.animals.length} />
+            <InforCards animais={animais.totalItems} />
           )}
 
           <AnimalDetails animais={animais.animals} carregando={isLoading} />

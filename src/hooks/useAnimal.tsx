@@ -1,4 +1,4 @@
-import { cadastroAnimalService } from "@/services/animalService";
+import { cadastroAnimalService, updateAnimalService } from "@/services/animalService";
 import { useState } from "react";
 
 export const useAnimal = () => {
@@ -6,9 +6,15 @@ export const useAnimal = () => {
 
   const cadastrarAnimal = async (
     nome: string,
+    tipo: string,
     sexo: string,
     porte: string,
+    idade: string,
     vacinado: boolean,
+    castrado: boolean,
+    vermifugado: boolean,
+    srd: boolean,
+    descricao: string,
     fotos: File[],
     organizacao_id: number
   ) => {
@@ -18,21 +24,21 @@ export const useAnimal = () => {
       const formData = new FormData();
       const dadosAnimal = {
         nome,
+        tipo,
         sexo,
         porte,
+        idade,
         vacinado,
+        castrado,
+        vermifugado,
+        srd,
+        descricao,
         organizacao_id
       };
       
       const json = JSON.stringify(dadosAnimal);
       const blob = new Blob([json], { type: "application/json" });
       formData.append("dados", blob); // Chave deve ser "dados" (igual ao @RequestPart do backend)
-  
-      // formData.append("nome", nome);
-      // formData.append("sexo", sexo);
-      // formData.append("porte", porte);
-      // formData.append("vacinado", vacinado.toString());
-      // formData.append("organizacao_id", organizacao_id.toString());
 
       // Adicionando as fotos
       fotos.forEach((foto) => {
@@ -40,9 +46,9 @@ export const useAnimal = () => {
       });
 
       // Chamando o serviço para cadastrar o animal
+      setError(null); 
       const data = await cadastroAnimalService(formData);
       console.log("Animal cadastrado com sucesso!", data);
-      setError(null); // Limpando qualquer erro anterior
     } catch (err: any) {
       const errorMessage =
         err?.response?.data?.message ||
@@ -52,7 +58,37 @@ export const useAnimal = () => {
     }
   };
 
+  const atualizaAnimal = async (
+    animalId: number,
+    changedFields: Record<string, any>,
+    newImages: File[],
+    imagesToDelete: string[]
+  ) => {
+    try {
+      const formData = new FormData();
+      
+      const dadosBlob = new Blob([JSON.stringify(changedFields)], {type: "application/json",});
+      formData.append("dados", dadosBlob);
+  
+      // Adicione novas imagens
+      newImages.forEach((file) => {
+        formData.append("novasFotos", file)
+      });
 
-  return { cadastrarAnimal, error};
-
+      if (imagesToDelete.length > 0) {
+        formData.append("fotosParaRemover", JSON.stringify(imagesToDelete));
+      }
+  
+      await updateAnimalService(animalId, formData);
+      setError(null);
+      return true;
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Erro ao atualizar animal. Tente novamente.";
+      setError(errorMessage); 
+    }
+  };
+  return { cadastrarAnimal, atualizaAnimal, error };
 };

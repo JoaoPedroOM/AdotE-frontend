@@ -43,7 +43,7 @@ const Adote = () => {
     <div className="bg-radial-gradient h-full w-full">
       <div className="content-layer">
         <Navbar />
-        <main className="p-4 mx-auto max-w-[1200px]">
+        <main className="p-4 mx-auto max-w-[1300px]">
           <div className="mx-auto w-full flex flex-col items-center justify-center mt-5">
             <h1 className="font-main font-bold leading-[1] text-[#D97706] text-5xl">
               Animais Disponíveis para Adoção
