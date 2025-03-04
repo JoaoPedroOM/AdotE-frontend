@@ -19,7 +19,6 @@ import { useQuery } from "@tanstack/react-query";
 import { animaisDisponiveis } from "@/services/animalService";
 import type { Animal } from "../models/animal";
 
-
 const Adote = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -36,8 +35,6 @@ const Adote = () => {
     queryFn: () => animaisDisponiveis(),
     staleTime: 20 * 60 * 1000,
   });
-
-  console.log(animais);
 
   return (
     <div className="bg-radial-gradient h-full w-full">
@@ -71,7 +68,7 @@ const Adote = () => {
             </div>
             {isFilterOpen && (
               <Card className="p-4 border rounded-lg shadow-sm fade-in">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   <div>
                     <Label
                       htmlFor="location-filter"
@@ -181,7 +178,7 @@ const Adote = () => {
           {/* Cards */}
           <section className="mt-5">
             {isLoading ? (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+              <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4 mb-8">
                 <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
                 <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
                 <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
@@ -193,16 +190,44 @@ const Adote = () => {
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                {animais.animals?.map((animal : Animal) => (
+                {animais.animals?.map((animal: Animal) => (
                   <AnimalCard key={animal.id} animal={animal} />
                 ))}
               </div>
             )}
           </section>
           {error && (
-            <p className="text-red-500">
-              {(error as Error).message || "Erro ao carregar animais."}
-            </p>
+            <div className="flex items-center justify-center bg-red-50 border border-red-300 p-4 rounded-lg mt-6">
+              <div className="flex items-center gap-4">
+                {/* Ícone de erro */}
+                <div className="p-3 bg-red-100 rounded-full">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="h-8 w-8 text-red-600"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 9v2m0 4h.01M21 12c0 4.972-4.029 9-9 9s-9-4.028-9-9 4.029-9 9-9 9 4.028 9 9z"
+                    />
+                  </svg>
+                </div>
+
+                <div>
+                  <p className="text-red-600 font-medium text-lg font-main">
+                    Oops! Algo deu errado.
+                  </p>
+                  <p className="text-red-500 mt-2 font-tertiary">
+                    Não conseguimos carregar os dados dos animais. Tente
+                    novamente mais tarde.
+                  </p>
+                </div>
+              </div>
+            </div>
           )}
         </main>
       </div>

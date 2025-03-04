@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
 });
 
@@ -108,6 +108,15 @@ export const deleteAnimalService = async (id: number) => {
 export const animaisDisponiveis = async () => {
   try {
     const response = await api.get(`/animal/find/all`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const animalProfile = async (id: number) =>{
+  try {
+    const response = await api.get(`/animal/find?id=${id}`);
     return response.data;
   } catch (error) {
     throw error;

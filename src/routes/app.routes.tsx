@@ -26,7 +26,7 @@ export function AppRoutes() {
       />
 
       <Route
-        path="/adote/perfil"
+        path="/adote/perfil/:id"
         element={
           <>
             <AnimalProfile/>

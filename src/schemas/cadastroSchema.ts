@@ -15,7 +15,7 @@ export const animalSchema = z.object({
   fotos: z.any()
   .refine(files => files?.length >= 1, "Pelo menos uma foto é obrigatória")
   .refine(files => files?.length <= 3, "No máximo 3 fotos são permitidas"),
-  descricao: z.string().min(1, "A descrição é obrigatória").max(620, "A descrição não pode ter mais de 620 caracteres"),
+  descricao: z.string().min(300, "A descrição deve ter no mínimo 300 caracteres").max(620, "A descrição não pode ter mais de 620 caracteres"),
 });
 
 export type AnimalFormValues = z.infer<typeof animalSchema>;

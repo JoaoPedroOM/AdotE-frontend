@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { consultarCep } from "@/utils/consultarCep";
 import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
+import { Link } from "react-router-dom";
 
 interface AnimalCardProps {
   animal: Animal;
@@ -47,6 +48,7 @@ const AnimalCard = ({ animal }: AnimalCardProps) => {
       <div className="max-w-[400px] mx-auto">
         <ImageSwiper images={imageUrls} />
       </div>
+      <Link to={`/adote/perfil/${animal.id}`}>
       <CardContent className="p-4">
         <div className="mt-4">
           <div className="flex justify-between">
@@ -76,7 +78,7 @@ const AnimalCard = ({ animal }: AnimalCardProps) => {
             </Badge>
             <Badge variant="secondary">
               <Heart className="w-4 h-4 mr-1 text-green-500" />
-              {animal.vacinado ? "Vacinado" : "Não Vacinado"}
+              {animal.vacinado ? "Vacinado" : "Não vac."}
             </Badge>
             <Badge variant="secondary">
               <Heart className="w-4 h-4 mr-1 text-blue-500" />
@@ -88,6 +90,7 @@ const AnimalCard = ({ animal }: AnimalCardProps) => {
           </p>
         </div>
       </CardContent>
+      </Link>
     </Card>
   );
 };
