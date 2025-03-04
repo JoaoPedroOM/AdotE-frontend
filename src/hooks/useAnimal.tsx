@@ -20,7 +20,6 @@ export const useAnimal = () => {
   ) => {
 
     try {
-      // Criando o FormData
       const formData = new FormData();
       const dadosAnimal = {
         nome,
@@ -37,15 +36,14 @@ export const useAnimal = () => {
       };
       
       const json = JSON.stringify(dadosAnimal);
+      console.log("JSON:", json);
       const blob = new Blob([json], { type: "application/json" });
-      formData.append("dados", blob); // Chave deve ser "dados" (igual ao @RequestPart do backend)
+      formData.append("dados", blob);
 
-      // Adicionando as fotos
       fotos.forEach((foto) => {
         formData.append("fotos", foto);
       });
 
-      // Chamando o serviço para cadastrar o animal
       setError(null); 
       const data = await cadastroAnimalService(formData);
       console.log("Animal cadastrado com sucesso!", data);
@@ -54,7 +52,7 @@ export const useAnimal = () => {
         err?.response?.data?.message ||
         err?.message ||
         "Erro ao cadastrar animal. Tente novamente.";
-      setError(errorMessage); // Definindo erro
+      setError(errorMessage);
     }
   };
 
@@ -64,23 +62,33 @@ export const useAnimal = () => {
     newImages: File[],
     imagesToDelete: string[]
   ) => {
+    console.log("Enviando para o backend:", {
+      changedFields,
+      newImages: newImages.length,
+      imagesToDelete,
+    });
+  
     try {
       const formData = new FormData();
-      
-      const dadosBlob = new Blob([JSON.stringify(changedFields)], {type: "application/json",});
-      formData.append("dados", dadosBlob);
-  
-      // Adicione novas imagens
+
+      console.log("Changed Fields antes do envio:", JSON.stringify(changedFields));
+      const json = JSON.stringify(changedFields);
+      const dadosBlob = new Blob([json], { type: "application/json" });
+      formData.append("dados", dadosBlob); 
+
       newImages.forEach((file) => {
-        formData.append("novasFotos", file)
+        formData.append("novasFotos", file); 
       });
 
       if (imagesToDelete.length > 0) {
-        formData.append("fotosParaRemover", JSON.stringify(imagesToDelete));
+        const removerFotos = JSON.stringify(imagesToDelete);
+        const fotosParaRemoverBlob = new Blob([removerFotos], {type: "application/json"});
+        formData.append("fotosParaRemover", fotosParaRemoverBlob);
       }
   
       await updateAnimalService(animalId, formData);
-      setError(null);
+  
+      setError(null); 
       return true;
     } catch (err: any) {
       const errorMessage =
@@ -88,7 +96,9 @@ export const useAnimal = () => {
         err?.message ||
         "Erro ao atualizar animal. Tente novamente.";
       setError(errorMessage); 
+      return false;
     }
   };
+  
   return { cadastrarAnimal, atualizaAnimal, error };
 };

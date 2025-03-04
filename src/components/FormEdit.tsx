@@ -55,10 +55,8 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
   const queryClient = useQueryClient();
   const [imageUrls, setImageUrls] = useState<string[]>([]);
 
-  // Atualiza os valores do formulário quando recebe um novo animal
   useEffect(() => {
     if (animal) {
-      // Set form values
       const formValues = {
         nome: animal.nome,
         tipo: animal.tipo === "CACHORRO" ? "Cachorro" : "Gato",
@@ -83,69 +81,61 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
         fotos: animal.fotos.map((foto) => foto.url),
       };
 
-      // Set form values
       Object.entries(formValues).forEach(([key, value]) => {
         setValue(key as any, value);
       });
 
-      // Store original values for comparison later
       setOriginalValues(formValues);
 
-      // Extract existing image URLs
       const urls = animal.fotos.map((foto) => foto.url);
       setImageUrls(urls);
 
-      // Reset image tracking states when dialog opens
       setImagesToDelete([]);
       setNewImages([]);
     }
   }, [animal?.id, setValue, isDialogOpen]);
 
-  // Function to check what fields have changed
-  const getChangedFields = (data: AnimalFormValues) => {
-    const changedFields: Record<string, any> = {};
-  
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === "fotos") return;
-  
-      // Comparação direta sem JSON.stringify
-      if (value !== originalValues[key]) {
-        changedFields[key] = value;
-      }
-    });
-  
-    return changedFields;
-  };
-  
+const getChangedFields = (data: AnimalFormValues) => {
+  const changedFields: Record<string, any> = {};
 
-  const convertToBackendValues = (changedFields: Record<string, any>) => {
-    const converted = { ...changedFields };
-    
-    if (converted.tipo) {
-      converted.tipo = converted.tipo === "Cachorro" ? "CACHORRO" : "GATO";
-    }
-    if (converted.sexo) {
-      converted.sexo = converted.sexo === "Macho" ? "MACHO" : "FEMEA";
-    }
-    if (converted.porte) {
-      converted.porte = converted.porte === "Pequeno" ? "PEQUENO" :
-        converted.porte === "Medio" ? "MEDIO" : "GRANDE";
-    }
-    if (converted.idade) {
-      converted.idade = converted.idade === "Filhote" ? "FILHOTE" :
-        converted.idade === "Jovem" ? "JOVEM" : "ADULTO";
-    }
-  
-    return converted;
-  };
+  Object.entries(data).forEach(([key, value]) => {
+    if (key === "fotos") return;
 
+    if (value !== originalValues[key]) {
+      changedFields[key] = value;
+    }
+  });
+
+  return changedFields;
+};
+
+const convertToBackendValues = (changedFields: Record<string, any>) => {
+  const converted = { ...changedFields };
+  
+  if (converted.tipo) {
+    converted.tipo = converted.tipo === "Cachorro" ? "CACHORRO" : "GATO";
+  }
+  if (converted.sexo) {
+    converted.sexo = converted.sexo === "Macho" ? "MACHO" : "FEMEA";
+  }
+  if (converted.porte) {
+    converted.porte = converted.porte === "Pequeno" ? "PEQUENO" :
+      converted.porte === "Medio" ? "MEDIO" : "GRANDE";
+  }
+  if (converted.idade) {
+    converted.idade = converted.idade === "Filhote" ? "FILHOTE" :
+      converted.idade === "Jovem" ? "JOVEM" :
+      converted.idade === "Adulto" ? "ADULTO" : "IDOSO";
+  }
+
+  return converted;
+};
+  
   async function onSubmit(data: AnimalFormValues) {
     if (!animal) return;
-  
     try {
       const changedFields = getChangedFields(data);
       
-      // Verifica se há alterações
       const hasChanges = 
         Object.keys(changedFields).length > 0 ||
         newImages.length > 0 ||
@@ -157,9 +147,8 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
         return;
       }
   
-      // Conversão para valores do backend
       const backendChangedFields = convertToBackendValues(changedFields);
-      
+  
       await atualizaAnimal(
         animal.id, 
         backendChangedFields, 
@@ -171,19 +160,17 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
       setIsDialogOpen(false);
   
       queryClient.invalidateQueries({
-        queryKey: ["animais", organizacao?.organizacao_id, page],
+        queryKey: ["animais", organizacao?.organizacao_id],
       });
     } catch (error) {
       console.error("Erro ao atualizar animal:", error);
       toast.error("Erro ao atualizar o animal.");
     }
   }
-
-  // Handle file input change
+  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
 
-    // Limit to 3 total images (existing + new)
     const totalImagesCount =
       imageUrls.length -
       imagesToDelete.length +
@@ -406,7 +393,6 @@ const FormEdit = ({ animal, localizacao }: FormEditProps) => {
                 type="checkbox"
                 id="vacinado"
                 className="h-4 w-4 rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
-                checked={watch("vacinado")}
                 {...register("vacinado")}
               />
               <p className="text-xs font-semibold text-red-700 mt-1">

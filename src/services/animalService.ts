@@ -65,7 +65,7 @@ export const updateAnimalService = async (animalId: number, formData: FormData) 
     });
     return response.data;
   } catch (error) {
-    console.error("Error en la petición:", error);
+    console.error("Algo de errado aconteceu:", error);
     throw error;
   }
 };
