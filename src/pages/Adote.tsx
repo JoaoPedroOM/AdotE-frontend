@@ -189,7 +189,7 @@ const Adote = () => {
                 <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
               </div>
             ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8 justify-items-center">
                 {animais.animals?.map((animal: Animal) => (
                   <AnimalCard key={animal.id} animal={animal} />
                 ))}
