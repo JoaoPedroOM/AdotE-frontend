@@ -3,7 +3,7 @@ import logo from "../assets/img/logo2.png";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, MapPin, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { animalProfile } from "@/services/animalService";
@@ -18,6 +18,8 @@ const AnimalProfile = () => {
   const [localizacao, setLocalizacao] = useState<string>("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const { id } = useParams();
+
+  const location = useLocation();
 
   const animalId = Number(id);
 
@@ -63,7 +65,7 @@ const AnimalProfile = () => {
         <main className="p-4 mx-auto max-w-[1200px]">
           <div className="flex items-center justify-between">
             <Link
-              to="/adote"
+               to={`/adote${location.search}`}
               className="flex items-center gap-2 hover:bg-orange-300 hover:text-neutral-900 px-4 py-2 rounded-md font-tertiary"
             >
               <ArrowLeft className="h-4 w-4" />

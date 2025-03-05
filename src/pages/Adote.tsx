@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "@/components/global/Navbar";
 import AnimalCard from "@/components/AnimalCard";
 
@@ -12,18 +12,60 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../components/ui/pagination";
 import { Skeleton } from "../components/ui/skeleton";
-import { Filter, MapPin } from "lucide-react";
+import { Filter } from "lucide-react";
 
-import { useQuery } from "@tanstack/react-query";
-import { animaisDisponiveis } from "@/services/animalService";
 import type { Animal } from "../models/animal";
+import { animaisDisponiveis } from "@/services/animalService";
+import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 
 const Adote = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const currentPage = parseInt(searchParams.get("page") || "0", 10);
+
+  // const [location, setLocation] = useState(searchParams.get("location") || "");
+  const [type, setType] = useState(searchParams.get("type") || "");
+  const [age, setAge] = useState(searchParams.get("age") || "");
+  const [size, setSize] = useState(searchParams.get("size") || "");
+  const [gender, setGender] = useState(searchParams.get("gender") || "");
+
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams();
+
+    if (type) newSearchParams.set("type", type);
+    if (age) newSearchParams.set("age", age);
+    if (size) newSearchParams.set("size", size);
+    if (gender) newSearchParams.set("gender", gender);
+    if (currentPage) newSearchParams.set("page", currentPage.toString());
+
+    setSearchParams(newSearchParams);
+  }, [type, age, size, gender, currentPage, setSearchParams]);
 
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);
+  };
+
+  const handleClearFilters = () => {
+    // setLocation("");
+    setType("");
+    setAge("");
+    setSize("");
+    setGender("");
+
+    const newSearchParams = new URLSearchParams();
+    newSearchParams.set("page", "0");
+    setSearchParams(newSearchParams);
   };
 
   const {
@@ -31,10 +73,25 @@ const Adote = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["allAnimals"],
-    queryFn: () => animaisDisponiveis(),
+    queryKey: ["allAnimals", currentPage, type, age, size, gender],
+    queryFn: () =>
+      animaisDisponiveis(
+        currentPage,
+        type && type !== "allTypes" ? type.toUpperCase() : "",
+        age && age !== "allAge" ? age.toUpperCase() : "",
+        size && size !== "allSize" ? size.toUpperCase() : "",
+        gender && gender !== "allGen" ? gender.toUpperCase() : ""
+      ),
     staleTime: 20 * 60 * 1000,
   });
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 0 && newPage < animais.totalPages) {
+      setSearchParams({ page: newPage.toString() });
+    }
+  };
+
+  console.log(animais);
 
   return (
     <div className="bg-radial-gradient h-full w-full">
@@ -57,6 +114,13 @@ const Adote = () => {
 
               <div className="flex gap-2">
                 <Button
+                  variant="outline"
+                  onClick={handleClearFilters}
+                  className="flex items-center gap-2 bg-red-200 hover:bg-red-300"
+                >
+                  Limpar Filtros
+                </Button>
+                <Button
                   variant={isFilterOpen ? "secondary" : "outline"}
                   onClick={toggleFilter}
                   className="flex items-center gap-2"
@@ -69,14 +133,15 @@ const Adote = () => {
             {isFilterOpen && (
               <Card className="p-4 border rounded-lg shadow-sm fade-in">
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  <div>
+                  {/* Filtro Localização */}
+                  {/* <div>
                     <Label
                       htmlFor="location-filter"
                       className="text-sm font-medium mb-1.5 block"
                     >
                       Localização
                     </Label>
-                    <Select value="" onValueChange={() => {}}>
+                    <Select value={location} onValueChange={setLocation}>
                       <SelectTrigger
                         id="location-filter"
                         className="w-full z-[500]"
@@ -92,8 +157,9 @@ const Adote = () => {
                         </SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
+                  </div> */}
 
+                  {/* Filtro Tipo de Animal */}
                   <div>
                     <Label
                       htmlFor="type-filter"
@@ -101,19 +167,22 @@ const Adote = () => {
                     >
                       Tipo de Animal
                     </Label>
-                    <Select value="" onValueChange={() => {}}>
+                    <Select value={type} onValueChange={setType}>
                       <SelectTrigger
                         id="type-filter"
-                        className="w-ful z-[500]l"
+                        className="w-full z-[500]"
                       >
                         <SelectValue placeholder="Todos os tipos" />
                       </SelectTrigger>
                       <SelectContent className="z-[500]">
+                        <SelectItem value="cachorro">Cachorro</SelectItem>
+                        <SelectItem value="gato">Gato</SelectItem>
                         <SelectItem value="allTypes">Todos os tipos</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
+                  {/* Filtro Idade */}
                   <div>
                     <Label
                       htmlFor="age-filter"
@@ -121,16 +190,21 @@ const Adote = () => {
                     >
                       Idade
                     </Label>
-                    <Select value="" onValueChange={() => {}}>
+                    <Select value={age} onValueChange={setAge}>
                       <SelectTrigger id="age-filter" className="w-full z-[500]">
                         <SelectValue placeholder="Todas as idades" />
                       </SelectTrigger>
                       <SelectContent className="z-[500]">
+                        <SelectItem value="filhote">Filhote</SelectItem>
+                        <SelectItem value="jovem">Jovem</SelectItem>
+                        <SelectItem value="adulto">Adulto</SelectItem>
+                        <SelectItem value="idoso">Idoso</SelectItem>
                         <SelectItem value="allAge">Todas as idades</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
+                  {/* Filtro Porte */}
                   <div>
                     <Label
                       htmlFor="size-filter"
@@ -138,7 +212,7 @@ const Adote = () => {
                     >
                       Porte
                     </Label>
-                    <Select value="" onValueChange={() => {}}>
+                    <Select value={size} onValueChange={setSize}>
                       <SelectTrigger
                         id="size-filter"
                         className="w-full z-[500]"
@@ -146,11 +220,15 @@ const Adote = () => {
                         <SelectValue placeholder="Todos os tamanhos" />
                       </SelectTrigger>
                       <SelectContent className="z-[500]">
+                        <SelectItem value="pequeno">Pequeno</SelectItem>
+                        <SelectItem value="medio">Médio</SelectItem>
+                        <SelectItem value="grande">Grande</SelectItem>
                         <SelectItem value="allSize">Todos os portes</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
+                  {/* Filtro Gênero */}
                   <div className="z-50">
                     <Label
                       htmlFor="gender-filter"
@@ -158,7 +236,7 @@ const Adote = () => {
                     >
                       Gênero
                     </Label>
-                    <Select value="" onValueChange={() => {}}>
+                    <Select value={gender} onValueChange={setGender}>
                       <SelectTrigger
                         id="gender-filter"
                         className="w-full z-[500]"
@@ -166,6 +244,8 @@ const Adote = () => {
                         <SelectValue placeholder="Todos os gêneros" />
                       </SelectTrigger>
                       <SelectContent className="z-[500]">
+                        <SelectItem value="macho">Macho</SelectItem>
+                        <SelectItem value="femea">Fêmea</SelectItem>
                         <SelectItem value="allGen">Todos os gêneros</SelectItem>
                       </SelectContent>
                     </Select>
@@ -189,11 +269,74 @@ const Adote = () => {
                 <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
               </div>
             ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8 justify-items-center">
-                {animais.animals?.map((animal: Animal) => (
-                  <AnimalCard key={animal.id} animal={animal} />
-                ))}
-              </div>
+              <>
+                {animais.animals.length > 0 ? (
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8 justify-items-center">
+                    {animais.animals?.map((animal: Animal) => (
+                      <AnimalCard key={animal.id} animal={animal} />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="font-main text-2xl">Nenhum animal encontrado</p>
+                )}
+                {/* Paginação */}
+                {animais.totalPages > 1 && (
+                  <Pagination className="my-5">
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          href={`?page=${Math.max(currentPage - 1, 0)}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(Math.max(currentPage - 1, 0));
+                          }}
+                          className={`bg-orange-400 hover:bg-orange-500 ${
+                            currentPage === 0
+                              ? "pointer-events-none opacity-50"
+                              : ""
+                          }`}
+                        />
+                      </PaginationItem>
+
+                      {[...Array(animais.totalPages)].map((_, pageNumber) => (
+                        <PaginationItem key={pageNumber}>
+                          <PaginationLink
+                            href={`?page=${pageNumber}`}
+                            isActive={currentPage === pageNumber}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handlePageChange(pageNumber);
+                            }}
+                            className="bg-orange-300 hover:bg-orange-400"
+                          >
+                            {pageNumber + 1}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+
+                      <PaginationItem>
+                        <PaginationNext
+                          href={`?page=${Math.min(
+                            currentPage + 1,
+                            animais.totalPages - 1
+                          )}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(
+                              Math.min(currentPage + 1, animais.totalPages - 1)
+                            );
+                          }}
+                          className={`bg-orange-400 hover:bg-orange-500 ${
+                            currentPage === animais.totalPages - 1
+                              ? "pointer-events-none opacity-50"
+                              : ""
+                          }`}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                )}
+              </>
             )}
           </section>
           {error && (

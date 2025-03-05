@@ -6,39 +6,6 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// export const cadastroAnimalService = async (
-//   nome: string,
-//   sexo: string,
-//   porte: string,
-//   vacinado: boolean,
-//   fotos: File[]
-// ) => {
-//   const formData = new FormData();
-
-//   formData.append("nome", nome);
-//   formData.append("sexo", sexo);
-//   formData.append("porte", porte);
-//   formData.append("vacinado", vacinado.toString());
-
-//   for (let i = 0; i < fotos.length; i++) {
-//     formData.append("fotos", fotos[i]); // "fotos" é a key esperada no backend
-//   }
-
-//   const token = Cookies.get("authToken");
-
-//   try {
-//     const response = await api.post("/animal/create", formData, {
-//       headers: {
-//         "Content-Type": "multipart/form-data",
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
-//     return response.data;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
 export const cadastroAnimalService = async (formData: FormData) => {
   const token = Cookies.get("authToken");
 
@@ -54,7 +21,10 @@ export const cadastroAnimalService = async (formData: FormData) => {
   }
 };
 
-export const updateAnimalService = async (animalId: number, formData: FormData) => {
+export const updateAnimalService = async (
+  animalId: number,
+  formData: FormData
+) => {
   const token = Cookies.get("authToken");
 
   try {
@@ -92,33 +62,45 @@ export const deleteAnimalService = async (id: number) => {
   const token = Cookies.get("authToken");
 
   try {
-    const response = await api.delete(`/animal/delete?animalId=${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await api.delete(`/animal/delete?animalId=${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const animaisDisponiveis = async () => {
+export const animaisDisponiveis = async (
+  page: number,
+  tipo: string,
+  idade: string,
+  porte: string,
+  sexo: string
+) => {
   try {
-    const response = await api.get(`/animal/find/all`);
+    const response = await api.get("/animal/find/all", {
+      params: {
+        page,
+        tipo,
+        idade,
+        porte,
+        sexo,
+      },
+    });
     return response.data;
   } catch (error) {
     throw error;
   }
-}
+};
 
-export const animalProfile = async (id: number) =>{
+export const animalProfile = async (id: number) => {
   try {
     const response = await api.get(`/animal/find?id=${id}`);
     return response.data;
   } catch (error) {
     throw error;
   }
-}
+};

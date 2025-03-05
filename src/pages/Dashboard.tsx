@@ -31,9 +31,6 @@ const Dashboard = () => {
     staleTime: 20 * 60 * 1000,
   });
 
-  console.log(page);
-  console.log("PÁGINA API", animais.totalPages);
-
   return (
     <div className="bg-radial-gradient h-full w-full">
       <div className="content-layer">
