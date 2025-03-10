@@ -27,6 +27,7 @@ import type { Animal } from "../models/animal";
 import { animaisDisponiveis } from "@/services/animalService";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const Adote = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -96,6 +97,11 @@ const Adote = () => {
   return (
     <div className="bg-radial-gradient h-full w-full">
       <div className="content-layer">
+      <Helmet>
+          <title>
+            AdotE
+          </title>
+        </Helmet>
         <Navbar />
         <main className="p-4 mx-auto max-w-[1300px]">
           <div className="mx-auto w-full flex flex-col items-center justify-center mt-5">

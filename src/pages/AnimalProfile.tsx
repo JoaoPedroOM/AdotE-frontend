@@ -108,32 +108,56 @@ const AnimalProfile = () => {
       <div className="content-layer">
         <Helmet>
           <title>
-            {animal?.nome || "Perfil do Animal - Adoção de Animais"}
+            {`AdotE | ${animal?.nome}` ||
+              "AdotE | Perfil do Animal"}
           </title>
           <meta
             name="description"
             content={animal?.descricao || "Conheça este animal para adoção."}
           />
+
+          {/* Facebook Open Graph Tags */}
+          <meta property="og:type" content="website" />
           <meta
             property="og:title"
-            content={animal?.nome || "Perfil do Animal - Adoção de Animais"}
+            content={`AdotE | ${animal?.nome}` || "AdotE | Perfil do Animal"}
           />
           <meta
             property="og:description"
             content={animal?.descricao || "Conheça este animal para adoção."}
           />
-          <meta property="og:image" content={selectedImage || imageUrls[0]} />
+          <meta
+            property="og:image"
+            content={selectedImage || imageUrls[0] || ""}
+          />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
           <meta property="og:url" content={currentUrl} />
+          <meta property="og:site_name" content="AdotE" />
+
+          {/* Twitter Card Tags */}
+          <meta name="twitter:card" content="summary_large_image" />
           <meta
             name="twitter:title"
-            content={animal?.nome || "Perfil do Animal - Adoção de Animais"}
+            content={`AdotE | ${animal?.nome}` || "AdotE | Perfil do Animal"}
           />
           <meta
             name="twitter:description"
             content={animal?.descricao || "Conheça este animal para adoção."}
           />
-          <meta name="twitter:image" content={selectedImage || imageUrls[0]} />
+          <meta
+            name="twitter:image"
+            content={selectedImage || imageUrls[0] || ""}
+          />
+
+          {/* WhatsApp Preview Tags */}
+          <meta
+            property="og:image:secure_url"
+            content={selectedImage || imageUrls[0] || ""}
+          />
+          <meta property="og:locale" content="pt_BR" />
         </Helmet>
+
         <Navbar />
         <main className="p-4 mx-auto max-w-[1200px]">
           <div className="flex items-center justify-between">
