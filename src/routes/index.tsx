@@ -29,7 +29,7 @@ export function Routes() {
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <AppRoutes />
-        <Toaster />    
+        <Toaster />   
       </QueryClientProvider>
     </BrowserRouter>
   );

@@ -1,17 +1,30 @@
-import Navbar from "@/components/global/Navbar";
-import logo from "../assets/img/logo2.png";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, MapPin, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { Link, useLocation, useParams } from "react-router-dom";
+import Navbar from "@/components/global/Navbar";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+
 import { useQuery } from "@tanstack/react-query";
 import { animalProfile } from "@/services/animalService";
 import type { Animal } from "@/models/animal";
 import type { Fotos } from "@/models/fotos";
-import { Skeleton } from "@/components/ui/skeleton";
 import { consultarCep } from "@/utils/consultarCep";
 import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
+
+import logo from "../assets/img/logo2.png";
+import { ArrowLeft, MapPin, Share2 } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
+import { FaTwitter } from "react-icons/fa";
+import { FaFacebook } from "react-icons/fa";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
 
 const AnimalProfile = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -20,7 +33,6 @@ const AnimalProfile = () => {
   const { id } = useParams();
 
   const location = useLocation();
-
   const animalId = Number(id);
 
   const {
@@ -58,14 +70,75 @@ const AnimalProfile = () => {
     extrairUrls();
   }, [animalId, animal.fotos]);
 
+  const handleShare = (platform: string) => {
+    if (!animal) return;
+    const currentUrl = window.location.href;
+    const shareText = encodeURIComponent(
+      `Conheça ${animal.nome}, um ${animal.tipo} para adoção!`
+    );
+
+    let shareUrl = "";
+
+    switch (platform) {
+      case "facebook":
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
+        break;
+      case "twitter":
+        shareUrl = `https://twitter.com/intent/tweet?text=${shareText}&url=${currentUrl}`;
+        break;
+      case "linkedin":
+        shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${currentUrl}&title=${animal.nome}&summary=${shareText}`;
+        break;
+      case "whatsapp":
+        shareUrl = `https://api.whatsapp.com/send?text=${shareText} ${currentUrl}`;
+        break;
+      default:
+        break;
+    }
+
+    if (shareUrl) {
+      window.open(shareUrl, "_blank", "width=600,height=400");
+    }
+  };
+
+  const currentUrl = window.location.href;
+
   return (
     <div className="bg-radial-gradient h-full w-full">
       <div className="content-layer">
+        <Helmet>
+          <title>
+            {animal?.nome || "Perfil do Animal - Adoção de Animais"}
+          </title>
+          <meta
+            name="description"
+            content={animal?.descricao || "Conheça este animal para adoção."}
+          />
+          <meta
+            property="og:title"
+            content={animal?.nome || "Perfil do Animal - Adoção de Animais"}
+          />
+          <meta
+            property="og:description"
+            content={animal?.descricao || "Conheça este animal para adoção."}
+          />
+          <meta property="og:image" content={selectedImage || imageUrls[0]} />
+          <meta property="og:url" content={currentUrl} />
+          <meta
+            name="twitter:title"
+            content={animal?.nome || "Perfil do Animal - Adoção de Animais"}
+          />
+          <meta
+            name="twitter:description"
+            content={animal?.descricao || "Conheça este animal para adoção."}
+          />
+          <meta name="twitter:image" content={selectedImage || imageUrls[0]} />
+        </Helmet>
         <Navbar />
         <main className="p-4 mx-auto max-w-[1200px]">
           <div className="flex items-center justify-between">
             <Link
-               to={`/adote${location.search}`}
+              to={`/adote${location.search}`}
               className="flex items-center gap-2 hover:bg-orange-300 hover:text-neutral-900 px-4 py-2 rounded-md font-tertiary"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -73,9 +146,36 @@ const AnimalProfile = () => {
             </Link>
 
             <div className="flex gap-2">
-              <Button variant="outline" size="icon">
-                <Share2 className="h-4 w-4" />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Share2 className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem
+                    onClick={() => handleShare("facebook")}
+                    className="cursor-pointer"
+                  >
+                    <FaFacebook className="h-4 w-4 mr-2" />
+                    Facebook
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleShare("twitter")}
+                    className="cursor-pointer"
+                  >
+                    <FaTwitter className="h-4 w-4 mr-2" />
+                    Twitter
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleShare("whatsapp")}
+                    className="cursor-pointer"
+                  >
+                    <FaWhatsapp className="h-4 w-4 mr-2" />
+                    WhatsApp
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 
