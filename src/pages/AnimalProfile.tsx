@@ -10,7 +10,6 @@ import { useQuery } from "@tanstack/react-query";
 import { animalProfile } from "@/services/animalService";
 import type { Animal } from "@/models/animal";
 import type { Fotos } from "@/models/fotos";
-import { consultarCep } from "@/utils/consultarCep";
 import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
 
 import logo from "../assets/img/logo2.png";
@@ -28,7 +27,6 @@ import {
 
 const AnimalProfile = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [localizacao, setLocalizacao] = useState<string>("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const { id } = useParams();
 
@@ -45,20 +43,6 @@ const AnimalProfile = () => {
   });
 
   useEffect(() => {
-    const buscarLocalizacao = async () => {
-      if (animal?.organizacao?.cep) {
-        try {
-          const dados = await consultarCep(animal.organizacao.cep);
-          if (dados) {
-            setLocalizacao(`${dados.cidade}, ${dados.estado}`);
-          }
-        } catch (error) {
-          console.error("Erro ao buscar CEP:", error);
-          setLocalizacao("Localização não disponível");
-        }
-      }
-    };
-
     const extrairUrls = () => {
       if (animal.fotos && Array.isArray(animal.fotos)) {
         const urls = animal.fotos.map((foto: Fotos) => foto.url);
@@ -66,7 +50,6 @@ const AnimalProfile = () => {
       }
     };
 
-    buscarLocalizacao();
     extrairUrls();
   }, [animalId, animal.fotos]);
 
@@ -321,7 +304,7 @@ const AnimalProfile = () => {
 
                   <div className="flex items-center mb-4 font-tertiary">
                     <MapPin className="h-4 w-4 mr-1" />
-                    <span>{localizacao || "Localização não disponível"}</span>
+                    <span>{animal.organizacao.endereco.cidade}, {animal.organizacao.endereco.estado}</span>
                   </div>
 
                   <div className="flex flex-wrap gap-2 mb-6 font-tertiary">
@@ -339,6 +322,9 @@ const AnimalProfile = () => {
                     </Badge>
                     <Badge variant="outline">
                       {animal.castrado ? "Castrado" : "Não castrado"}
+                    </Badge>
+                    <Badge variant="outline">
+                      {animal.vermifugado ? "Vermifugado" : "Não vermifugado"}
                     </Badge>
                   </div>
                 </div>

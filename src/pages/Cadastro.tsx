@@ -1,6 +1,6 @@
 import { InputMask } from "@react-input/mask";
 import type { RegisterFormValues } from "@/schemas/authSchema";
-import { registerSchema } from "../schemas/authSchema";
+import { registerSchema, validateCEP } from "../schemas/authSchema";
 import { ErrorMessage } from "@hookform/error-message";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, useForm } from "react-hook-form";
@@ -19,29 +19,29 @@ const Cadastro = () => {
     register,
     reset,
     handleSubmit,
+    setValue,
     formState: { isSubmitting, errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
   });
 
   async function onSubmit(data: FieldValues) {
-    console.log("Form dados:", data);
     const email = data.email;
     const senha = data.password;
     const nome = data.organizationName;
     const cnpj = data.cnpj.replace(/\D/g, "");
-    const cep = data.cep.replace(/\D/g, "");
     const numero = data.phone.replace(/\D/g, "");
 
+    const endereco = {
+      cep: data.cep.replace(/\D/g, ""),
+      rua: data.logradouro,
+      numero: data.numero,
+      cidade: data.cidade,
+      estado: data.estado,
+    };
+
     try {
-      await cadastroAndLogin(
-        email,
-        senha,
-        nome,
-        cnpj,
-        cep,
-        numero
-      );
+      await cadastroAndLogin(nome, numero, cnpj, endereco, email, senha);
 
       reset({
         email: "",
@@ -50,6 +50,10 @@ const Cadastro = () => {
         organizationName: "",
         phone: "",
         cep: "",
+        logradouro: "",
+        cidade: "",
+        numero: "",
+        estado: "",
       });
     } catch (error) {
       console.error("Erro ao tentar cadastrar:", error);
@@ -70,7 +74,7 @@ const Cadastro = () => {
         >
           <img src={logo} className="h-10" alt="Adota Logo" />
           <span className="self-center text-2xl font-bold font-main whitespace-nowrap text-black">
-          AdotE
+            AdotE
           </span>
         </Link>
         <div className="text-center mb-[30px] text-black">
@@ -151,10 +155,79 @@ const Cadastro = () => {
               {...register("cep")}
               placeholder="00000-000"
               className="input"
+              onBlur={async (e) => {
+                const cep = e.target.value.replace("-", "");
+                if (await validateCEP(cep)) {
+                  const response = await fetch(
+                    `https://viacep.com.br/ws/${cep}/json/`
+                  );
+                  const data = await response.json();
+                  if (!data.erro) {
+                    setValue("cidade", data.localidade);
+                    setValue("estado", data.uf);
+                    setValue("logradouro", data.logradouro);
+                  }
+                }
+              }}
             />
             <p className="text-xs text-red-700 mt-1">
               <ErrorMessage errors={errors} name="cep" />
             </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="w-full">
+              <Label htmlFor="logradouro" className="text-black font-tertiary">
+                Logradouro
+              </Label>
+              <input
+                type="text"
+                {...register("logradouro")}
+                className="input"
+                disabled
+                placeholder="Logradouro"
+              />
+            </div>
+            <div>
+              <div>
+                <Label htmlFor="numero" className="text-black font-tertiary">
+                  Número
+                </Label>
+                <input
+                  type="number"
+                  {...register("numero")}
+                  className="input"
+                  placeholder="Número"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="w-full">
+              <Label htmlFor="cidade" className="text-black font-tertiary">
+                Cidade
+              </Label>
+              <input
+                type="text"
+                {...register("cidade")}
+                className="input"
+                disabled
+                placeholder="Cidade"
+              />
+            </div>
+            <div>
+              <Label htmlFor="estado" className="text-black font-tertiary">
+                Estado
+              </Label>
+              <input
+                type="text"
+                {...register("estado")}
+                className="input"
+                disabled
+                placeholder="Estado"
+              />
+            </div>
           </div>
 
           <div>

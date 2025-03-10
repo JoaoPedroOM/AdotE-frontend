@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const api = axios.create({
-  baseURL:import.meta.env.VITE_API_BASE_URL,
+  baseURL:"http://localhost:8080",
   withCredentials: true,
 });
 
@@ -20,21 +20,29 @@ export const loginService = async (email: string, senha: string) => {
 };
 
 export const cadastroService = async (
+  nome: string,
+  numero: string,
+  cnpj: string,
+  endereco: any,
   email: string,
   senha: string,
-  nome: string,
-  cnpj: string,
-  cep: string,
-  numero: string
 ) => {
   try {
-    const response = await api.post("/adote/auth/register", {
+    console.log("Dados enviados para o backend:", {
+      nome,
+      numero,
+      cnpj,
+      endereco,
       email,
       senha,
+    });
+    const response = await api.post("/adote/auth/register", {
       nome,
-      cnpj,
-      cep,
       numero,
+      cnpj, 
+      endereco,
+      email,
+      senha
     });
     return response.data;
   } catch (error: any) {

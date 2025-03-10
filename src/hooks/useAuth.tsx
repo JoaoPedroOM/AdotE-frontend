@@ -47,15 +47,15 @@ export const useAuth = () => {
   };
 
   const cadastroAndLogin = async (
+    nome: string,
+    numero: string,
+    cnpj: string,
+    endereco: any,
     email: string,
     senha: string,
-    nome: string,
-    cnpj: string,
-    cep: string,
-    numero: string
   ) => {
     try {
-      await cadastroService(email, senha, nome, cnpj, cep, numero);
+      await cadastroService(nome, numero, cnpj, endereco, email, senha);
       await login(email, senha);
     } catch (err: any) {
       const errorMessage =

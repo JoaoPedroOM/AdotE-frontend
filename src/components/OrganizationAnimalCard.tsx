@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import type { Animal } from "@/models/animal";
 
 import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
-import { consultarCep } from "@/utils/consultarCep";
 import { twMerge } from "tailwind-merge";
 
 import FormEdit from "./FormEdit";
@@ -15,30 +14,13 @@ import { ImageSwiper } from "../components/ui/image-swiper";
 
 
 const OrganizationAnimalCard = ({ animal }: { animal: Animal }) => {
-  const [localizacao, setLocalizacao] = useState<string>("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
-    const buscarLocalizacao = async () => {
-      if (animal?.organizacao?.cep) {
-        try {
-          const dados = await consultarCep(animal.organizacao.cep);
-          if (dados) {
-            setLocalizacao(`${dados.cidade}, ${dados.estado}`);
-          }
-        } catch (error) {
-          console.error("Erro ao buscar CEP:", error);
-          setLocalizacao("Localização não disponível");
-        }
-      }
-    };
-
     const extrairUrls = () => {
       const urls = animal.fotos.map(foto => foto.url);
       setImageUrls(urls);
     };
-
-    buscarLocalizacao();
     extrairUrls();
   }, [animal]);
 
@@ -62,14 +44,14 @@ const OrganizationAnimalCard = ({ animal }: { animal: Animal }) => {
               </h2>
             </>
             {/* Abre formulario com as informações do card para editar */}
-              <FormEdit key={animal?.id} animal={animal} localizacao={localizacao}/>
+              <FormEdit key={animal?.id} animal={animal}/>
           </div>
           <h2
             className={twMerge(
               "font-normal text-base font-tertiary text-gray-700 mb-2"
             )}
           >
-            {localizacao || "Localização não disponível"}
+            {animal.organizacao.endereco.cidade}, {animal.organizacao.endereco.estado}
           </h2>
 
           <div className="flex items-center gap-2">

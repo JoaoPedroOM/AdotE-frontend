@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-async function validateCEP(cep: string): Promise<boolean> {
+export async function validateCEP(cep: string): Promise<boolean> {
   try {
     const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
     const data = await response.json();
@@ -26,7 +26,9 @@ export const loginSchema = baseAuthSchema;
 export const registerSchema = baseAuthSchema.extend({
   organizationName: z.string().min(1, "O nome da organização é obrigatório"),
   phone: z.string().length(15, "O telefone precisa ser válido"),
-  cep: z.string().length(9, "O CEP precisa ser válido")
+  cep: z
+    .string()
+    .length(9, "O CEP precisa ser válido")
     .superRefine(async (cep, ctx) => {
       const isValid = await validateCEP(cep);
       if (!isValid) {
@@ -36,6 +38,10 @@ export const registerSchema = baseAuthSchema.extend({
         });
       }
     }),
+  cidade: z.string().min(1, "A cidade é obrigatória"),
+  numero: z.string().min(1, "O número é obrigatória"),
+  estado: z.string().min(1, "O estado é obrigatório"),
+  logradouro: z.string().min(1, "O logradouro é obrigatório"),
   cnpj: z.string().length(18, "O CNPJ precisa ser válido"),
 });
 

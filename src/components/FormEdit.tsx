@@ -24,10 +24,9 @@ import { useAnimal } from "@/hooks/useAnimal";
 
 interface FormEditProps {
   animal: Animal | null;
-  localizacao: string;
 }
 
-const FormEdit = ({ animal, localizacao }: FormEditProps) => {
+const FormEdit = ({ animal }: FormEditProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [originalValues, setOriginalValues] = useState<any>({});
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
@@ -508,7 +507,7 @@ const convertToBackendValues = (changedFields: Record<string, any>) => {
               type="text"
               placeholder="Localização"
               className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
-              value={localizacao}
+              value={animal?.organizacao.endereco.cidade}
               disabled
             />
           </div>

@@ -7,7 +7,6 @@ import { Heart } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { consultarCep } from "@/utils/consultarCep";
 import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
 import { Link } from "react-router-dom";
 
@@ -16,30 +15,13 @@ interface AnimalCardProps {
 }
 
 const AnimalCard = ({ animal }: AnimalCardProps) => {
-  const [localizacao, setLocalizacao] = useState<string>("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
-    const buscarLocalizacao = async () => {
-      if (animal?.organizacao?.cep) {
-        try {
-          const dados = await consultarCep(animal.organizacao.cep);
-          if (dados) {
-            setLocalizacao(`${dados.cidade}, ${dados.estado}`);
-          }
-        } catch (error) {
-          console.error("Erro ao buscar CEP:", error);
-          setLocalizacao("Localização não disponível");
-        }
-      }
-    };
-
     const extrairUrls = () => {
       const urls = animal.fotos.map((foto) => foto.url);
       setImageUrls(urls);
     };
-
-    buscarLocalizacao();
     extrairUrls();
   }, [animal]);
 
@@ -69,7 +51,7 @@ const AnimalCard = ({ animal }: AnimalCardProps) => {
                 "font-normal text-base font-tertiary text-gray-700 mb-2"
               )}
             >
-              {localizacao || "Localização não disponível"}
+              {animal.organizacao.endereco.cidade}, {animal.organizacao.endereco.estado}
             </h2>
 
             <div className="flex items-center gap-2">
