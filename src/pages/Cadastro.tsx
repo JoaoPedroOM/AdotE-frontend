@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { Helmet } from "react-helmet";
 
 const Cadastro = () => {
   const { cadastroAndLogin, error } = useAuth();
@@ -66,6 +67,38 @@ const Cadastro = () => {
       <div className="bg-particles" />
       <div className="fundo_vinheta escuro" />
       <div className="page_texture" />
+
+      <Helmet>
+        <title>AdotE | Cadastro</title>
+        <meta
+          name="description"
+          content="Cadastre sua organização na plataforma AdotE para começar a gerenciar seus animais disponíveis para adoção, editar informações e conectar-se com adotantes."
+        />
+        {/* Facebook Open Graph Tags */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="AdotE | Cadastro" />
+        <meta
+          property="og:description"
+          content="Cadastre sua organização na plataforma AdotE para começar a gerenciar seus animais disponíveis para adoção, editar informações e conectar-se com adotantes."
+        />
+        <meta property="og:image" content={logo} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content="https://adot-e.vercel.app/cadastro" />
+        <meta property="og:site_name" content="AdotE" />
+
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="AdotE | Cadastro" />
+        <meta
+          name="twitter:description"
+          content="Cadastre sua organização na plataforma AdotE para começar a gerenciar seus animais disponíveis para adoção, editar informações e conectar-se com adotantes."
+        />
+        <meta name="twitter:image" content={logo} />
+        {/* WhatsApp Preview Tags */}
+        <meta property="og:image:secure_url" content={logo} />
+        <meta property="og:locale" content="pt_BR" />
+      </Helmet>
 
       <div className="flex-1 flex flex-col items-center justify-center text-white">
         <Link

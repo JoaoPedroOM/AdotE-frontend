@@ -91,8 +91,7 @@ const AnimalProfile = () => {
       <div className="content-layer">
         <Helmet>
           <title>
-            {`AdotE | ${animal?.nome}` ||
-              "AdotE | Perfil do Animal"}
+          AdotE | Perfil do Animal
           </title>
           <meta
             name="description"

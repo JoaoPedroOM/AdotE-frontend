@@ -3,9 +3,9 @@ import logo from "../../assets/img/logo2.png";
 import { Link, useNavigate } from "react-router";
 
 // import { Link as ScrollLink } from "react-scroll";
-import { HashLink } from 'react-router-hash-link';
+import { HashLink } from "react-router-hash-link";
 
-import perfil from "../../assets/img/UserPerfil.png"
+import perfil from "../../assets/img/UserPerfil.png";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -18,7 +18,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const {isLoggedIn, islogout} = useAuthStore();
+  const { isLoggedIn, islogout } = useAuthStore();
 
   const navigate = useNavigate();
 
@@ -36,7 +36,7 @@ const Navbar = () => {
         >
           <img src={logo} className="h-10" alt="Adota Logo" />
           <span className="self-center text-2xl font-semibold whitespace-nowrap text-[#30302E]">
-          AdotE
+            AdotE
           </span>
         </Link>
         <button
@@ -79,93 +79,105 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="cursor-pointer md:w-auto w-full">
-            <HashLink
-          smooth
-          to="/#sobre"
-          className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
-        >
-          Sobre Nós
-        </HashLink>
+              <HashLink
+                smooth
+                to="/#sobre"
+                className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
+              >
+                Sobre Nós
+              </HashLink>
             </li>
             {isLoggedIn ? (
               <div className="md:w-auto w-full md:px-3">
                 <div className="md:block hidden">
-                <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Avatar className="cursor-pointer">
-                    <AvatarImage
-                      src={perfil}
-                      alt="@user"
-                    />
-                    <AvatarFallback>US</AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-40 z-[2000]">
-                  <DropdownMenuItem onClick={() => navigate("/dashboard")} className="cursor-pointer">
-                    Dashboard
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/reset")} className="cursor-pointer">
-                    Resetar senha
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleLogout}  className="cursor-pointer">
-                    Sair
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Avatar className="cursor-pointer">
+                        <AvatarImage src={perfil} alt="@user" />
+                        <AvatarFallback>US</AvatarFallback>
+                      </Avatar>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-40 z-[2000]">
+                      <DropdownMenuItem
+                        onClick={() => navigate("/dashboard")}
+                        className="cursor-pointer"
+                      >
+                        Dashboard
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => navigate("/organizacoes")}
+                        className="cursor-pointer"
+                      >
+                        Organizações
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => navigate("/reset")}
+                        className="cursor-pointer"
+                      >
+                        Resetar senha
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={handleLogout}
+                        className="cursor-pointer"
+                      >
+                        Sair
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
                 <div className="md:hidden block">
-                <li className="md:w-auto w-full">
-                <Link
-                  to="/organizacoes"
-                  className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
-                >
-                  Organizações
-                </Link>
-              </li>
-                <li className="md:w-auto w-full">
-                <Link
-                  to="/dashboard"
-                  className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
-                >
-                  Dashboard
-                </Link>
-              </li>
-              <li className="md:w-auto w-full">
-                <Link
-                  to="/reset"
-                  className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
-                >
-                  Resetar senha
-                </Link>
-              </li>
-              <li className="md:w-auto w-full">
-              <button
-                  onClick={handleLogout}
-                  className="block py-2 px-3 uppercase md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
-                >
-                  Sair
-                </button>
-              </li>
+                  <li className="md:w-auto w-full">
+                    <Link
+                      to="/organizacoes"
+                      className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
+                    >
+                      Organizações
+                    </Link>
+                  </li>
+                  <li className="md:w-auto w-full">
+                    <Link
+                      to="/dashboard"
+                      className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
+                    >
+                      Dashboard
+                    </Link>
+                  </li>
+                  <li className="md:w-auto w-full">
+                    <Link
+                      to="/reset"
+                      className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
+                    >
+                      Resetar senha
+                    </Link>
+                  </li>
+                  <li className="md:w-auto w-full">
+                    <button
+                      onClick={handleLogout}
+                      className="block py-2 px-3 uppercase md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
+                    >
+                      Sair
+                    </button>
+                  </li>
                 </div>
               </div>
             ) : (
               <>
-              <li className="md:w-auto w-full">
-                <Link
-                  to="/organizacoes"
-                  className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
-                >
-                  Organizações
-                </Link>
-              </li>
-              <li className="md:w-auto w-full">
-                <Link
-                  to="/login"
-                  className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
-                >
-                  Sou ONG
-                </Link>
-              </li>
+                <li className="md:w-auto w-full">
+                  <Link
+                    to="/organizacoes"
+                    className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
+                  >
+                    Organizações
+                  </Link>
+                </li>
+                <li className="md:w-auto w-full">
+                  <Link
+                    to="/login"
+                    className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
+                  >
+                    Sou ONG
+                  </Link>
+                </li>
               </>
             )}
           </ul>
