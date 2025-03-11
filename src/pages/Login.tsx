@@ -4,6 +4,7 @@ import { ErrorMessage } from "@hookform/error-message";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
+import { Helmet } from "react-helmet";
 
 import logo from "../assets/img/logo2.png";
 import { Label } from "@/components/ui/label";
@@ -42,6 +43,47 @@ const Login = () => {
       <div className="fundo_vinheta escuro" />
       <div className="page_texture" />
 
+      <Helmet>
+        <title>AdotE | Login</title>
+        <meta
+          name="description"
+          content="Faça login como organização na plataforma AdotE para gerenciar seus animais disponíveis para adoção, editar informações e conectar-se com adotantes."
+        />
+        {/* Facebook Open Graph Tags */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="AdotE | Login" />
+        <meta
+          property="og:description"
+          content="Faça login como organização na plataforma AdotE para gerenciar seus animais disponíveis para adoção, editar informações e conectar-se com adotantes."
+        />
+        <meta
+          property="og:image"
+          content={logo}
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content="https://adot-e.vercel.app/login" />
+        <meta property="og:site_name" content="AdotE" />
+
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="AdotE | Login" />
+        <meta
+          name="twitter:description"
+          content="Faça login como organização na plataforma AdotE para gerenciar seus animais disponíveis para adoção, editar informações e conectar-se com adotantes."
+        />
+        <meta
+          name="twitter:image"
+          content={logo}
+        />
+        {/* WhatsApp Preview Tags */}
+        <meta
+          property="og:image:secure_url"
+          content={logo}
+        />
+        <meta property="og:locale" content="pt_BR" />
+      </Helmet>
+
       <div className="flex-1 flex flex-col items-center justify-center text-white">
         <Link
           to="/"
@@ -49,7 +91,7 @@ const Login = () => {
         >
           <img src={logo} className="h-10" alt="Adota Logo" />
           <span className="self-center text-2xl font-bold font-main whitespace-nowrap text-black">
-          AdotE
+            AdotE
           </span>
         </Link>
         <div className="text-center mb-[30px] text-black">

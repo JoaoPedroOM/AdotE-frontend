@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import Navbar from "./components/global/Navbar";
 import pata from "./assets/img/paw.png";
 import Card from "./components/Card";
@@ -6,13 +7,60 @@ import Hero from "./components/Hero";
 const App = () => {
   return (
     <div className="relative w-full">
+      <Helmet>
+        <title>AdotE</title>
+        <meta
+          name="description"
+          content="Encontre animais para adoção em sua região e ajude a dar um lar para quem precisa. Conheça nossos animais disponíveis e faça a diferença."
+        />
+        {/* Facebook Open Graph Tags */}
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:title"
+          content="AdotE | Encontre o Animal Perfeito para Adoção"
+        />
+        <meta
+          property="og:description"
+          content="Encontre animais para adoção em sua região e ajude a dar um lar para quem precisa. Conheça nossos animais disponíveis e faça a diferença."
+        />
+        <meta
+          property="og:image"
+          content="https://i.ibb.co/4RmPy5f3/homeHero.png"
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content="https://adot-e.vercel.app/" />
+        <meta property="og:site_name" content="AdotE" />
+
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="AdotE | Encontre o Animal Perfeito para Adoção"
+        />
+        <meta
+          name="twitter:description"
+          content="Encontre animais para adoção em sua região e ajude a dar um lar para quem precisa. Conheça nossos animais disponíveis e faça a diferença."
+        />
+        <meta
+          name="twitter:image"
+          content="https://i.ibb.co/4RmPy5f3/homeHero.png"
+        />
+        {/* WhatsApp Preview Tags */}
+        <meta
+          property="og:image:secure_url"
+          content="https://i.ibb.co/4RmPy5f3/homeHero.png"
+        />
+        <meta property="og:locale" content="pt_BR" />
+      </Helmet>
+
       <img
         src={pata}
         alt="Detalhe decorativo"
         className="absolute lg:z-[200] z-[200] opacity-70 pointer-events-none transform -rotate-12 lg:top-10"
       />
 
-    <img
+      <img
         src={pata}
         alt="Detalhe decorativo"
         className="absolute z-[100] opacity-70 pointer-events-none transform -rotate-12 bottom-0 right-0"
@@ -25,8 +73,11 @@ const App = () => {
 
       <div className="content-layer">
         <Navbar />
-        <Hero/>
-        <section className="flex flex-col items-center justify-center w-full md:h-screen min-h-[50vh] py-8 md:py-0 mt-[30vh]" id="sobre">
+        <Hero />
+        <section
+          className="flex flex-col items-center justify-center w-full md:h-screen min-h-[50vh] py-8 md:py-0 mt-[30vh]"
+          id="sobre"
+        >
           <Card
             title="Encontre o Melhor Amigo Para a Vida Toda"
             description="Adotar um animal é uma experiência transformadora. Eles não só ganham um lar, mas também oferecem amor incondicional. Dê uma chance a um novo começo para um amigo peludo que está esperando por você!"
@@ -67,7 +118,6 @@ const App = () => {
           />
         </section>
       </div>
-
     </div>
   );
 };

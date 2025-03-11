@@ -114,10 +114,38 @@ export const organizacoesDisponiveis = async (
     const params = {
       page,
       ...(estado && { estado }),
-      ...(cidade && { cidade }) 
+      ...(cidade && { cidade }),
     };
 
     const response = await api.get("/organizacao/find/all", { params });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const organizacaoDetails = async (
+  id: number,
+  page: number,
+  tipo: string,
+  idade: string,
+  porte: string,
+  sexo: string
+) => {
+  try {
+    const response = await api.get(
+      `/organizacao/find`,
+      {
+        params: {
+          id,
+          page,
+          tipo,
+          idade,
+          porte,
+          sexo,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     throw error;
