@@ -104,3 +104,17 @@ export const animalProfile = async (id: number) => {
     throw error;
   }
 };
+
+
+export const organizacoesDisponiveis = async (page: number) => {
+  try {
+    const response = await api.get("/organizacao/find/all", {
+      params: {
+        page,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

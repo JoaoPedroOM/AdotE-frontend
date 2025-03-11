@@ -34,8 +34,6 @@ const Adote = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const currentPage = parseInt(searchParams.get("page") || "0", 10);
-
-  // const [location, setLocation] = useState(searchParams.get("location") || "");
   const [type, setType] = useState(searchParams.get("type") || "");
   const [age, setAge] = useState(searchParams.get("age") || "");
   const [size, setSize] = useState(searchParams.get("size") || "");
@@ -58,7 +56,6 @@ const Adote = () => {
   };
 
   const handleClearFilters = () => {
-    // setLocation("");
     setType("");
     setAge("");
     setSize("");
@@ -97,10 +94,8 @@ const Adote = () => {
   return (
     <div className="bg-radial-gradient h-full w-full">
       <div className="content-layer">
-      <Helmet>
-          <title>
-            AdotE
-          </title>
+        <Helmet>
+          <title>AdotE</title>
         </Helmet>
         <Navbar />
         <main className="p-4 mx-auto max-w-[1300px]">
@@ -119,13 +114,15 @@ const Adote = () => {
               <div className="text-lg font-bold font-tertiary">Filtros</div>
 
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={handleClearFilters}
-                  className="flex items-center gap-2 bg-red-200 hover:bg-red-300"
-                >
-                  Limpar Filtros
-                </Button>
+                {type || age || size || gender ? (
+                  <Button
+                    variant="outline"
+                    onClick={handleClearFilters}
+                    className="flex items-center gap-2 bg-red-200 hover:bg-red-300"
+                  >
+                    Limpar Filtros
+                  </Button>
+                ) : null}
                 <Button
                   variant={isFilterOpen ? "secondary" : "outline"}
                   onClick={toggleFilter}
@@ -139,32 +136,6 @@ const Adote = () => {
             {isFilterOpen && (
               <Card className="p-4 border rounded-lg shadow-sm fade-in">
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {/* Filtro Localização */}
-                  {/* <div>
-                    <Label
-                      htmlFor="location-filter"
-                      className="text-sm font-medium mb-1.5 block"
-                    >
-                      Localização
-                    </Label>
-                    <Select value={location} onValueChange={setLocation}>
-                      <SelectTrigger
-                        id="location-filter"
-                        className="w-full z-[500]"
-                      >
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-muted-foreground" />
-                          <SelectValue placeholder="Todas as localizações" />
-                        </div>
-                      </SelectTrigger>
-                      <SelectContent className="z-[500]">
-                        <SelectItem value="all">
-                          Todas as localizações
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div> */}
-
                   {/* Filtro Tipo de Animal */}
                   <div>
                     <Label

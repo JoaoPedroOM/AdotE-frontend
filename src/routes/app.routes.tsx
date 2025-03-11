@@ -10,6 +10,8 @@ import PublicRoute from "./PublicRoute";
 import NotFound from "@/pages/NotFound";
 import Adote from "@/pages/Adote";
 import AnimalProfile from "@/pages/AnimalProfile";
+import Organizacoes from "@/pages/Organizacoes";
+import OrganizacaoDetails from "@/pages/OrganizacaoDetails";
 
 export function AppRoutes() {
   return (
@@ -29,7 +31,7 @@ export function AppRoutes() {
         path="/adote/perfil/:id"
         element={
           <>
-            <AnimalProfile/>
+            <AnimalProfile />
             <Footer />
           </>
         }
@@ -40,6 +42,26 @@ export function AppRoutes() {
         element={
           <>
             <Adote />
+            <Footer />
+          </>
+        }
+      />
+
+      <Route
+        path="/organizacoes"
+        element={
+          <>
+            <Organizacoes />
+            <Footer />
+          </>
+        }
+      />
+
+      <Route
+        path="/organizacoes/detalhes/:id"
+        element={
+          <>
+            <OrganizacaoDetails />
             <Footer />
           </>
         }
