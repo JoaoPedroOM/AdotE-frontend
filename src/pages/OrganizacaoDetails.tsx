@@ -74,7 +74,7 @@ const OrganizacaoDetails = () => {
   } = useQuery({
     queryKey: ["organizacao", Number(id), currentPage, type, age, size, gender],
     queryFn: () =>
-      organizacaoDetails(Number(id), currentPage, type, age, size, gender),
+      organizacaoDetails(Number(id), currentPage, type.toUpperCase(), age.toUpperCase(), size.toUpperCase(),  gender.toUpperCase()),
     staleTime: 20 * 60 * 1000,
   });
 
