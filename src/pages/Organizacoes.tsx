@@ -20,7 +20,7 @@ import {
   PaginationPrevious,
 } from "../components/ui/pagination";
 import { Skeleton } from "../components/ui/skeleton";
-import { Filter, MapPin } from "lucide-react";
+import { Filter } from "lucide-react";
 
 import { organizacoesDisponiveis } from "@/services/animalService";
 import { useQuery } from "@tanstack/react-query";
@@ -29,56 +29,115 @@ import { Helmet } from "react-helmet";
 import { Organizacao } from "@/models/organizacao";
 import OrganizationCard from "@/components/OrganizationCard";
 
+const fetchStates = async () => {
+  const response = await fetch(
+    "https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome"
+  );
+  if (!response.ok) {
+    throw new Error("Falha ao carregar estados");
+  }
+  return response.json();
+};
+
+const fetchCities = async (stateUF: any) => {
+  if (!stateUF) return [];
+  const response = await fetch(
+    `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${stateUF}/municipios?orderBy=nome`
+  );
+  if (!response.ok) {
+    throw new Error("Falha ao carregar cidades");
+  }
+  return response.json();
+};
+
 const Organizacoes = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-
+  
   const currentPage = parseInt(searchParams.get("page") || "0", 10);
+  const [estado, setEstado] = useState(searchParams.get("estado") || "");
+  const [cidade, setCidade] = useState(searchParams.get("cidade") || "");
 
-  const [location, setLocation] = useState(searchParams.get("location") || "");
+
+  const { data: states, isLoading: isStatesLoading } = useQuery({
+    queryKey: ["states"],
+    queryFn: fetchStates,
+  });
+
+  // Usando o Tanstack Query para obter as cidades do estado selecionado
+  const { data: cities, isLoading: isCitiesLoading } = useQuery({
+    queryKey: ["cities", estado],
+    queryFn: () => fetchCities(estado),
+    enabled: !!estado, 
+  });
+
+  const handleStateChange = (newState: any) => {
+    setEstado(newState);
+    setCidade(""); 
+
+    // Atualiza os parâmetros da URL
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("estado", newState);
+    newSearchParams.delete("cidade");
+    newSearchParams.set("page", "0");
+    setSearchParams(newSearchParams);
+  };
+
+  const handleCityChange = (newCity: any) => {
+    setCidade(newCity);
+
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("cidade", newCity);
+    newSearchParams.set("page", "0"); 
+    setSearchParams(newSearchParams);
+  };
+
   useEffect(() => {
     const newSearchParams = new URLSearchParams();
 
-    if (location) newSearchParams.set("location", location);
     if (currentPage) newSearchParams.set("page", currentPage.toString());
+    if (estado) newSearchParams.set("estado", estado);
+    if (cidade) newSearchParams.set("cidade", cidade);
 
     setSearchParams(newSearchParams);
-  }, [location, currentPage, setSearchParams]);
+  }, [currentPage, estado, cidade, setSearchParams]);
 
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);
   };
 
   const handleClearFilters = () => {
-    setLocation("");
+    setEstado("");
+    setCidade("");
 
     const newSearchParams = new URLSearchParams();
     newSearchParams.set("page", "0");
     setSearchParams(newSearchParams);
   };
 
+  // Modifique a query para incluir os filtros de estado e cidade
   const {
     data: organizations = [],
     isLoading,
     error,
   } = useQuery({
-    // queryKey: ["allOrganizacoes", currentPage, location] "quando tiver enviando a localização",
-    queryKey: ["allOrganizacoes", currentPage, location],
+    queryKey: ["allOrganizacoes", currentPage, estado, cidade],
     queryFn: () =>
       organizacoesDisponiveis(
-        currentPage
-        // location && Location !== "allLocations" ? location.toUpperCase() : ""
+        currentPage,
+        estado && estado !== "allEstado" ? estado.toUpperCase() : "",
+        cidade && cidade !== "allCidade" ? cidade : ""
       ),
     staleTime: 20 * 60 * 1000,
   });
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < organizations.totalPages) {
-      setSearchParams({ page: newPage.toString() });
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set("page", newPage.toString());
+      setSearchParams(newSearchParams);
     }
   };
-
-  console.log(organizations);
 
   return (
     <div className="bg-radial-gradient h-full w-full">
@@ -103,7 +162,7 @@ const Organizacoes = () => {
               <div className="text-lg font-bold font-tertiary">Filtros</div>
 
               <div className="flex gap-2">
-                {location && (
+                {(estado || cidade) && (
                   <Button
                     variant="outline"
                     onClick={handleClearFilters}
@@ -125,28 +184,78 @@ const Organizacoes = () => {
             {isFilterOpen && (
               <Card className="p-4 border rounded-lg shadow-sm fade-in">
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {/* Filtro Localização */}
+                  {/* Filtro Estado */}
                   <div>
                     <Label
-                      htmlFor="location-filter"
+                      htmlFor="state-filter"
                       className="text-sm font-medium mb-1.5 block"
                     >
-                      Localização
+                      Estado
                     </Label>
-                    <Select value={location} onValueChange={setLocation}>
+                    <Select value={estado} onValueChange={handleStateChange}>
                       <SelectTrigger
-                        id="location-filter"
+                        id="state-filter"
                         className="w-full z-[500]"
                       >
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-muted-foreground" />
-                          <SelectValue placeholder="Todas as localizações" />
-                        </div>
+                        <SelectValue placeholder="Selecione um estado" />
                       </SelectTrigger>
                       <SelectContent className="z-[500]">
-                        <SelectItem value="allLocations">
-                          Todas as localizações
+                        <SelectItem value="allEstado">
+                          Todos os estados
                         </SelectItem>
+                        {isStatesLoading ? (
+                          <SelectItem value="loading">Carregando...</SelectItem>
+                        ) : (
+                          states?.map((estado: any) => (
+                            <SelectItem key={estado.id} value={estado.sigla}>
+                              {estado.nome}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Filtro Cidade */}
+                  <div>
+                    <Label
+                      htmlFor="city-filter"
+                      className="text-sm font-medium mb-1.5 block"
+                    >
+                      Cidade
+                    </Label>
+                    <Select
+                      value={cidade}
+                      onValueChange={handleCityChange}
+                      disabled={!estado || isCitiesLoading}
+                    >
+                      <SelectTrigger
+                        id="city-filter"
+                        className="w-full z-[500]"
+                      >
+                        <SelectValue
+                          placeholder={
+                            estado
+                              ? "Selecione uma cidade"
+                              : "Selecione um estado primeiro"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent className="z-[500]">
+                        {estado && (
+                          <SelectItem value="allCidade">
+                            Todas as cidades
+                          </SelectItem>
+                        )}
+                        {isCitiesLoading ? (
+                          <SelectItem value="loading">Carregando...</SelectItem>
+                        ) : (
+                          cities?.map((cidade: any) => (
+                            <SelectItem key={cidade.id} value={cidade.nome}>
+                              {cidade.nome}
+                            </SelectItem>
+                          ))
+                        )}
                       </SelectContent>
                     </Select>
                   </div>
@@ -170,7 +279,7 @@ const Organizacoes = () => {
               </div>
             ) : (
               <>
-                {organizations.organizacoes.length > 0 ? (
+                {organizations.organizacoes?.length > 0 ? (
                   <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-2">
                     {organizations.organizacoes?.map(
                       (organizacao: Organizacao) => (
@@ -277,7 +386,7 @@ const Organizacoes = () => {
                     Oops! Algo deu errado.
                   </p>
                   <p className="text-red-500 mt-2 font-tertiary">
-                    Não conseguimos carregar os dados dos animais. Tente
+                    Não conseguimos carregar os dados das organizações. Tente
                     novamente mais tarde.
                   </p>
                 </div>

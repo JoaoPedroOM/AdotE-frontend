@@ -105,14 +105,19 @@ export const animalProfile = async (id: number) => {
   }
 };
 
-
-export const organizacoesDisponiveis = async (page: number) => {
+export const organizacoesDisponiveis = async (
+  page: number,
+  estado: string,
+  cidade: string
+) => {
   try {
-    const response = await api.get("/organizacao/find/all", {
-      params: {
-        page,
-      },
-    });
+    const params = {
+      page,
+      ...(estado && { estado }),
+      ...(cidade && { cidade }) 
+    };
+
+    const response = await api.get("/organizacao/find/all", { params });
     return response.data;
   } catch (error) {
     throw error;
