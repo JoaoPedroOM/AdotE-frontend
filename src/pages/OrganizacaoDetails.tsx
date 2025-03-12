@@ -74,7 +74,14 @@ const OrganizacaoDetails = () => {
   } = useQuery({
     queryKey: ["organizacao", Number(id), currentPage, type, age, size, gender],
     queryFn: () =>
-      organizacaoDetails(Number(id), currentPage, type.toUpperCase(), age.toUpperCase(), size.toUpperCase(),  gender.toUpperCase()),
+      organizacaoDetails(
+        Number(id),
+        currentPage,
+        type && type !== "allTypes" ? type.toUpperCase() : "",
+        age && age !== "allAge" ? age.toUpperCase() : "",
+        size && size !== "allSize" ? size.toUpperCase() : "",
+        gender && gender !== "allGen" ? gender.toUpperCase() : ""
+      ),
     staleTime: 20 * 60 * 1000,
   });
 
@@ -295,15 +302,15 @@ const OrganizacaoDetails = () => {
           <section className="mt-5">
             {isLoading ? (
               <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4 mb-8">
-              <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
-              <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
-              <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
-              <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
-              <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
-              <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
-              <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
-              <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
-            </div>
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+                <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
+              </div>
             ) : (
               <>
                 {organizacao.animais.content.length > 0 ? (
