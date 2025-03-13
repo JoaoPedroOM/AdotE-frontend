@@ -9,6 +9,7 @@ const App = () => {
     <div className="relative w-full">
       <Helmet>
         <title>AdotE</title>
+        <link rel="preload" href="./assets/img/gradiente.png" as="image" />
         <meta
           name="description"
           content="Encontre animais para adoção em sua região e ajude a dar um lar para quem precisa. Conheça nossos animais disponíveis e faça a diferença."
@@ -67,7 +68,6 @@ const App = () => {
       />
 
       <div className="fundo_inicio" />
-      <div className="bg-particles" />
       <div className="fundo_vinheta" />
       <div className="page_texture" />
 

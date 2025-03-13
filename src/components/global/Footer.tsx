@@ -42,7 +42,7 @@ const Footer = () => {
         </div>
         <div className="flex md:flex-row flex-col-reverse gap-3 justify-between py-2 font-tertiary">
           <span className="font-medium">
-            &copy; {new Date().getFullYear()} Adota. All Rights Reserved.
+            &copy; {new Date().getFullYear()} AdotE. All Rights Reserved.
           </span>
           <Link to="/">Privacy Policy</Link>
         </div>
