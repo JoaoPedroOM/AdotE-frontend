@@ -62,7 +62,7 @@ const Cadastro = () => {
   }
 
   return (
-    <div className="flex h-screen">
+    <div className="lg:flex relative w-full">
       <div className="fundo_inicio" />
       <div className="bg-particles" />
       <div className="fundo_vinheta escuro" />
@@ -99,7 +99,6 @@ const Cadastro = () => {
         <meta property="og:image:secure_url" content={logo} />
         <meta property="og:locale" content="pt_BR" />
       </Helmet>
-
       <div className="flex-1 flex flex-col items-center justify-center text-white">
         <Link
           to="/"

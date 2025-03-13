@@ -29,8 +29,9 @@ const AnimalProfile = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const { id } = useParams();
-
+  
   const location = useLocation();
+  const previousLocation = location.state?.from || "/adote";
   const animalId = Number(id);
 
   const {
@@ -144,7 +145,7 @@ const AnimalProfile = () => {
         <main className="p-4 mx-auto max-w-[1200px]">
           <div className="flex items-center justify-between">
             <Link
-              to={`/adote${location.search}`}
+              to={previousLocation}
               className="flex items-center gap-2 hover:bg-orange-300 hover:text-neutral-900 px-4 py-2 rounded-md font-tertiary"
             >
               <ArrowLeft className="h-4 w-4" />

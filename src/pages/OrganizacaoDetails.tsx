@@ -28,6 +28,8 @@ import {
 } from "../components/ui/pagination";
 import { Skeleton } from "../components/ui/skeleton";
 import { Animal } from "@/models/animal";
+import { Helmet } from "react-helmet";
+import { formatCNPJ, formatPhoneNumber } from "@/utils/formatters";
 
 const OrganizacaoDetails = () => {
   const { id } = useParams();
@@ -95,6 +97,9 @@ const OrganizacaoDetails = () => {
 
   return (
     <div className="bg-radial-gradient h-full w-full">
+       <Helmet>
+          <title>AdotE | Perfil da Organização</title>
+        </Helmet>
       <div className="content-layer">
         <Navbar />
         <main className="p-4 mx-auto max-w-[1300px]">
@@ -127,7 +132,7 @@ const OrganizacaoDetails = () => {
                     <p className="text-lg text-gray-600">
                       CNPJ:{" "}
                       <span className="font-bold text-gray-800 text-base">
-                        {organizacao.cnpj}
+                       {formatCNPJ(organizacao.cnpj)}
                       </span>
                     </p>
                   </div>
@@ -167,7 +172,7 @@ const OrganizacaoDetails = () => {
                     <p className="text-lg text-gray-600">
                       Número:{" "}
                       <span className="font-bold text-gray-800 text-base">
-                        {organizacao.numero}
+                        {formatPhoneNumber(organizacao.numero)}
                       </span>
                     </p>
                   </div>

@@ -8,13 +8,14 @@ import { Heart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface AnimalCardProps {
   animal: Animal;
 }
 
 const AnimalCard = ({ animal }: AnimalCardProps) => {
+  const location = useLocation();
   const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
@@ -32,6 +33,7 @@ const AnimalCard = ({ animal }: AnimalCardProps) => {
       </div>
       <Link
         to={`/adote/perfil/${animal.id}${window.location.search}`} 
+        state={{ from: location }}
       >
         <CardContent className="p-4">
           <div className="mt-4">
