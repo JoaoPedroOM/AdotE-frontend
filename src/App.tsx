@@ -7,9 +7,12 @@ import Hero from "./components/Hero";
 const App = () => {
   return (
     <div className="relative w-full">
+      <div className="page_texture" />
+      <div className="fundo_inicio" />
+      <div className="fundo_vinheta" />
+
       <Helmet>
         <title>AdotE</title>
-        <link rel="preload" href="./assets/img/gradiente.png" as="image" />
         <meta
           name="description"
           content="Encontre animais para adoção em sua região e ajude a dar um lar para quem precisa. Conheça nossos animais disponíveis e faça a diferença."
@@ -66,10 +69,6 @@ const App = () => {
         alt="Detalhe decorativo"
         className="absolute z-[100] opacity-70 pointer-events-none transform -rotate-12 bottom-0 right-0"
       />
-
-      <div className="fundo_inicio" />
-      <div className="fundo_vinheta" />
-      <div className="page_texture" />
 
       <div className="content-layer">
         <Navbar />

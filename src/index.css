@@ -56,7 +56,6 @@ body, html {
   min-height: 100vh;
   width: 100vw;
   overflow-y: auto;
-  will-change: transform; 
 }
 .fundo_inicio {
   position: fixed;
@@ -71,7 +70,7 @@ body, html {
     #FDBA74 100% 
   );
   background-size: 200% 200%;
-  animation: gradientShift 20s ease infinite;
+  animation: gradientShift 15s ease infinite;
   z-index: -3;
   pointer-events: none;
 }
@@ -93,7 +92,6 @@ body, html {
   linear-gradient(160deg, #FCD34D88 0%, #FBBF24AA 100%);
   background-size: cover;
   background-position: center;
-  mix-blend-mode: multiply;
   mix-blend-mode: soft-light;
   z-index: -1;
   pointer-events: none;
