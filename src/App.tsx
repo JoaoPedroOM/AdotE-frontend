@@ -31,8 +31,8 @@ const App = () => {
           property="og:image"
           content="https://i.imgur.com/NouQZrB.png"
         />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
+        <meta property="og:image:width" content="1903" />
+        <meta property="og:image:height" content="950" />
         <meta property="og:url" content="https://adot-e.vercel.app/" />
         <meta property="og:site_name" content="AdotE" />
 
