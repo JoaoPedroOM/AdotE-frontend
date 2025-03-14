@@ -29,7 +29,7 @@ const App = () => {
         />
         <meta
           property="og:image"
-          content="https://i.ibb.co/4RmPy5f3/homeHero.png"
+          content="https://i.imgur.com/NouQZrB.png"
         />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -48,12 +48,12 @@ const App = () => {
         />
         <meta
           name="twitter:image"
-          content="https://i.ibb.co/4RmPy5f3/homeHero.png"
+          content="https://i.imgur.com/NouQZrB.png"
         />
         {/* WhatsApp Preview Tags */}
         <meta
           property="og:image:secure_url"
-          content="https://i.ibb.co/4RmPy5f3/homeHero.png"
+          content="https://i.imgur.com/NouQZrB.png"
         />
         <meta property="og:locale" content="pt_BR" />
       </Helmet>
