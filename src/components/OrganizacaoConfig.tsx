@@ -3,24 +3,42 @@ import { KeyRound, Wallet } from "lucide-react";
 import { Button } from "./ui/button";
 import CardInfoOrganizacao from "./CardInfoOrganizacao";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "./ui/dialog";
+import { useForm } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  OrganizacaoFormValues,
+  organizacaoSchema,
+} from "@/schemas/organizacaoSchema";
 
 const OrganizacaoConfig = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [chavePix, setChavePix] = useState("");
-  const [tipoChave, setTipoChave] = useState("PIX");
+
+  const {
+    register,
+    reset,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<OrganizacaoFormValues>({
+    resolver: zodResolver(organizacaoSchema),
+    mode: "onBlur",
+    defaultValues: {
+      tipoChave: "Telefone",
+      chave: "",
+    },
+  });
 
   const openModal = () => {
     setIsModalOpen(true);
   };
 
-  const closeModal = () => {
+  async function onSubmit(data: OrganizacaoFormValues) {
+    console.log(data);
+    reset({
+      chave: "",
+    })
     setIsModalOpen(false);
-  };
-
-  const salvarChave = () => {
-    console.log(`Tipo da Chave: ${tipoChave}, Chave: ${chavePix}`);
-    closeModal();
-  };
+  }
 
   return (
     <div className="grid gap-6 md:grid-cols-3 lg:gap-10 sm-max:justify-items-center">
@@ -33,7 +51,7 @@ const OrganizacaoConfig = () => {
           </h2>
 
           <div className="space-y-4">
-            {true ? (
+            {false ? (
               <div className="md:p-4 p-0 rounded-lg">
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="font-medium md:text-base text-sm flex items-center gap-2 text-gray-700">
@@ -44,13 +62,13 @@ const OrganizacaoConfig = () => {
                     variant="outline"
                     size="sm"
                     className="bg-gray-100 hover:bg-gray-200 text-black font-tertiary text-sm"
-                    onClick={openModal} 
+                    onClick={openModal}
                   >
                     Atualizar
                   </Button>
                 </div>
                 <p className="bg-[#eeeeee] py-2 px-3 rounded text-sm break-all text-gray-900 font-semibold">
-                  13996983568
+                  (00) 00000-0000
                 </p>
               </div>
             ) : (
@@ -60,7 +78,7 @@ const OrganizacaoConfig = () => {
                 </p>
                 <Button
                   className="bg-gray-100 hover:bg-gray-200 text-black"
-                  onClick={openModal} 
+                  onClick={openModal}
                 >
                   <KeyRound className="mr-2 h-4 w-4" />
                   Registrar Chave PIX
@@ -73,20 +91,23 @@ const OrganizacaoConfig = () => {
         {/* Modal para adicionar ou atualizar chave PIX */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="w-full max-w-md z-[999] rounded-lg">
-            <DialogTitle className="font-semibold text-gray-800 mb-4 text-2xl font-main">
+            <DialogTitle className="font-semibold text-gray-800 mb-2 text-2xl font-main">
               Chave PIX
-              <p className="font-tertiary text-base font-medium leading-[1.5]">Registre sua chave PIX para começar a receber doações de apoiadores e fortalecer sua missão de resgatar e cuidar de animais.</p>
+              <p className="font-tertiary text-base font-medium leading-[1.5]">
+                Registre sua chave PIX para começar a receber doações de
+                apoiadores e fortalecer sua missão de resgatar e cuidar de
+                animais.
+              </p>
             </DialogTitle>
-            <div className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
               {/* Escolher tipo de chave */}
               <div>
                 <label className="block text-sm font-tertiary font-medium text-gray-700">
                   Tipo de Chave
                 </label>
                 <select
-                  value={tipoChave}
-                  onChange={(e) => setTipoChave(e.target.value)}
-                   className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
+                  {...register("tipoChave")}
+                  className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
                 >
                   <option value="Telefone">Telefone</option>
                   <option value="Email">Email</option>
@@ -94,6 +115,12 @@ const OrganizacaoConfig = () => {
                   <option value="CNPJ">CNPJ</option>
                   <option value="ChaveAleatoria">Chave aleatória</option>
                 </select>
+                <ErrorMessage
+                  errors={errors}
+                  name="tipoChave"
+                  as="p"
+                  className="text-xs font-semibold text-red-700 mt-1"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 font-tertiary">
@@ -103,16 +130,21 @@ const OrganizacaoConfig = () => {
                   type="text"
                   className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
                   placeholder="Digite sua chave"
-                  value={chavePix}
-                  onChange={(e) => setChavePix(e.target.value)}
+                  {...register("chave")}
+                />
+                <ErrorMessage
+                  errors={errors}
+                  name="chave"
+                  as="p"
+                  className="text-xs font-semibold text-red-700 mt-1"
                 />
               </div>
-            </div>
-            <DialogFooter className="mt-4 flex justify-end gap-2">
-              <Button className="text-white" onClick={salvarChave}>
-                Salvar
-              </Button>
-            </DialogFooter>
+              <DialogFooter className="mt-4 flex justify-end gap-2">
+                <Button className="text-white" disabled={isSubmitting}>
+                  Salvar
+                </Button>
+              </DialogFooter>
+            </form>
           </DialogContent>
         </Dialog>
       </div>

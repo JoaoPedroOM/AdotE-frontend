@@ -13,24 +13,24 @@ const CardInfoOrganizacao = () => {
 
               <div>
                 <p className="text-sm font-bold font-tertiary">CNPJ</p>
-                <p className="text-gray-600 font-tertiary">1232313123123123131</p>
+                <p className="text-gray-600 font-tertiary">00.000.000/0001-00</p>
               </div>
 
               <div>
                 <p className="text-sm font-bold font-tertiary">Email</p>
-                <p className="text-gray-600 font-tertiary">joaopedro@hotmail.com</p>
+                <p className="text-gray-600 font-tertiary">joao@email.com</p>
               </div>
 
               <div>
                 <p className="text-sm font-bold font-tertiary">Telefone</p>
-                <p className="text-gray-600 font-tertiary">(13) 996983568</p>
+                <p className="text-gray-600 font-tertiary">(00) 00000-0000</p>
               </div>
 
               <div>
                 <p className="text-sm font-bold font-tertiary">Endereço</p>
-                <p className="text-gray-600 font-tertiary">Rua Bela, 55</p>
-                <p className="text-gray-600 font-tertiary">Peruíbe - São Paulo</p>
-                <p className="text-gray-600 font-tertiary"><span className="text-sm font-bold font-tertiary text-gray-800">CEP:</span> 11750-000</p>
+                <p className="text-gray-600 font-tertiary">Rua das Ruas, 20</p>
+                <p className="text-gray-600 font-tertiary">São Paulo - SP</p>
+                <p className="text-gray-600 font-tertiary"><span className="text-[14px] font-bold font-tertiary text-gray-800">CEP:</span> 00000-000</p>
               </div>
             </div>
           </div>
