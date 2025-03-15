@@ -89,7 +89,7 @@ body, html {
   height: 100vh;
   background: 
   url("./assets/img/gradiente.png"),
-  linear-gradient(160deg, #FCD34D88 0%, #FBBF24AA 100%) !important;
+  linear-gradient(160deg, #FCD34D88 0%, #FBBF24AA 100%);
   background-size: cover;
   background-position: center;
   mix-blend-mode: soft-light !important;
