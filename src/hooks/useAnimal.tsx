@@ -44,7 +44,7 @@ export const useAnimal = () => {
       });
 
       setError(null); 
-      const data = await cadastroAnimalService(formData);
+      await cadastroAnimalService(formData);
     } catch (err: any) {
       const errorMessage =
         err?.response?.data?.message ||
