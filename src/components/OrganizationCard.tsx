@@ -1,9 +1,9 @@
 import { Organizacao } from "@/models/organizacao";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { ChevronRight, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const OrganizationCard = ({ organizacao }: { organizacao: Organizacao }) => {
-
   return (
     <Link
       key={organizacao.id}
@@ -13,9 +13,17 @@ const OrganizationCard = ({ organizacao }: { organizacao: Organizacao }) => {
       <div className="flex items-start justify-between">
         <div className="flex gap-4">
           <div className="flex-grow space-y-1">
-            <h3 className="text-xl font-semibold group-hover:text-primary transition-colors font-main tracking-[0.3px]">
-              {organizacao.nome}
-            </h3>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <h3
+                  className="text-xl font-semibold group-hover:text-primary transition-colors font-main tracking-[0.3px] 
+                 overflow-hidden text-ellipsis whitespace-nowrap  lg:max-w-[210px] md:max-w-[260px] sm:max-w-[300px] max-w-[200px]"
+                >
+                  {organizacao.nome}
+                </h3>
+              </TooltipTrigger>
+              <TooltipContent className="z-[999]">{organizacao.nome}</TooltipContent>
+            </Tooltip>
             <div className="flex items-center text-muted-foreground text-sm font-tertiary">
               <MapPin className="h-4 w-4 mr-1" />
               <span>

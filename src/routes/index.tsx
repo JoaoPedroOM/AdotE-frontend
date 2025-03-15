@@ -9,6 +9,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { Toaster } from "../components/ui/sonner"
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export function Routes() {
   const { islogin } = useAuthStore();
@@ -27,10 +28,12 @@ export function Routes() {
 
   return (
     <BrowserRouter>
+    <TooltipProvider>
       <QueryClientProvider client={queryClient}>
         <AppRoutes />
         <Toaster />   
       </QueryClientProvider>
+      </TooltipProvider>
     </BrowserRouter>
   );
 }

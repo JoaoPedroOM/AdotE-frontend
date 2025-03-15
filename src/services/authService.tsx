@@ -28,14 +28,6 @@ export const cadastroService = async (
   senha: string,
 ) => {
   try {
-    console.log("Dados enviados para o backend:", {
-      nome,
-      numero,
-      cnpj,
-      endereco,
-      email,
-      senha,
-    });
     const response = await api.post("/adote/auth/register", {
       nome,
       numero,

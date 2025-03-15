@@ -89,8 +89,6 @@ const Adote = () => {
     }
   };
 
-  console.log(animais);
-
   return (
     <div className="bg-radial-gradient h-full w-full">
       <div className="content-layer">

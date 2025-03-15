@@ -38,10 +38,9 @@ const Login = () => {
 
   return (
     <div className="flex h-screen">
-      <div className="fundo_inicio" />
-      <div className="bg-particles" />
-      <div className="fundo_vinheta escuro" />
       <div className="page_texture" />
+      <div className="fundo_inicio" />
+      <div className="fundo_vinheta" />
 
       <Helmet>
         <title>AdotE | Login</title>

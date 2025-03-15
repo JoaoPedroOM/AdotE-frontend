@@ -66,7 +66,6 @@ const AnimaisCadastro = () => {
   };
 
   async function onSubmit(data: FieldValues) {
-    console.log("Dados do formulário:", data);
     try {
       const fotos = data.fotos;
       const sexoUpperCase = data.sexo.toUpperCase();
@@ -112,7 +111,6 @@ const AnimaisCadastro = () => {
       console.error("Erro ao cadastrar animal:", error);
     }
 
-    console.log("Dados do formulário:", data);
     reset({
       nome: "",
       fotos: [],

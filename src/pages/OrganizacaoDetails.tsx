@@ -30,6 +30,7 @@ import { Skeleton } from "../components/ui/skeleton";
 import { Animal } from "@/models/animal";
 import { Helmet } from "react-helmet";
 import { formatCNPJ, formatPhoneNumber } from "@/utils/formatters";
+import LocationMap from "@/components/LocationMap";
 
 const OrganizacaoDetails = () => {
   const { id } = useParams();
@@ -93,13 +94,11 @@ const OrganizacaoDetails = () => {
     }
   };
 
-  console.log(organizacao);
-
   return (
     <div className="bg-radial-gradient h-full w-full">
-       <Helmet>
-          <title>AdotE | Perfil da Organização</title>
-        </Helmet>
+      <Helmet>
+        <title>AdotE | Perfil da Organização</title>
+      </Helmet>
       <div className="content-layer">
         <Navbar />
         <main className="p-4 mx-auto max-w-[1300px]">
@@ -120,52 +119,53 @@ const OrganizacaoDetails = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {/* Detalhes da Organização */}
                   <div className="font-tertiary">
-                    <h2 className="font-main text-2xl font-semibold text-[#30302E] mb-1">
+                    <h2 className="font-main text-xl font-semibold text-[#30302E] mb-1">
                       Detalhes da Organização
                     </h2>
                     <p className="text-lg text-gray-600">
                       Nome:{" "}
-                      <span className="font-bold text-gray-800">
+                      <span className="font-bold text-gray-800 text-[17px]">
                         {organizacao.nome}
                       </span>
                     </p>
                     <p className="text-lg text-gray-600">
                       CNPJ:{" "}
                       <span className="font-bold text-gray-800 text-base">
-                       {formatCNPJ(organizacao.cnpj)}
+                        {formatCNPJ(organizacao.cnpj)}
                       </span>
                     </p>
                   </div>
 
                   {/* Endereço */}
                   <div className="font-tertiary">
-                    <h2 className="font-main text-2xl font-semibold text-[#30302E] mb-1">
+                    <h2 className="font-main text-xl font-semibold text-[#30302E] mb-1">
                       Endereço
                     </h2>
                     <p className="text-lg text-gray-600">
                       Rua:{" "}
-                      <span className="font-bold text-gray-800">
+                      <span className="font-bold text-gray-800 text-[17px]">
                         {organizacao.endereco?.rua},{" "}
                         {organizacao.endereco?.numero}
                       </span>
                     </p>
                     <p className="text-lg text-gray-600">
                       Cidade:{" "}
-                      <span className="font-bold text-gray-800">
+                      <span className="font-bold text-gray-800 text-[17px]">
                         {organizacao.endereco?.cidade},{" "}
                         {organizacao.endereco?.estado}
                       </span>
                     </p>
+                    <LocationMap localizacao={organizacao.endereco} />
                   </div>
 
                   {/* Contato */}
                   <div className="font-tertiary">
-                    <h2 className="font-main text-2xl font-semibold text-[#30302E] mb-1">
+                    <h2 className="font-main text-xl font-semibold text-[#30302E] mb-1">
                       Contato
                     </h2>
                     <p className="text-lg text-gray-600">
                       Email:{" "}
-                      <span className="font-bold text-gray-800">
+                      <span className="font-bold text-gray-800 text-[17px]">
                         {organizacao.email}
                       </span>
                     </p>

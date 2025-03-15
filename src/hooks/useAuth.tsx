@@ -78,7 +78,6 @@ export const useAuth = () => {
   const logout = () => {
     Cookies.remove("authToken");
     islogout();
-    console.log("Logout realizado com sucesso!");
   };
 
   return { login, cadastroAndLogin, resetPassword, logout, error };

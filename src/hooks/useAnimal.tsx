@@ -36,7 +36,6 @@ export const useAnimal = () => {
       };
       
       const json = JSON.stringify(dadosAnimal);
-      console.log("JSON:", json);
       const blob = new Blob([json], { type: "application/json" });
       formData.append("dados", blob);
 
@@ -46,7 +45,6 @@ export const useAnimal = () => {
 
       setError(null); 
       const data = await cadastroAnimalService(formData);
-      console.log("Animal cadastrado com sucesso!", data);
     } catch (err: any) {
       const errorMessage =
         err?.response?.data?.message ||
@@ -61,17 +59,9 @@ export const useAnimal = () => {
     changedFields: Record<string, any>,
     newImages: File[],
     imagesToDelete: string[]
-  ) => {
-    console.log("Enviando para o backend:", {
-      changedFields,
-      newImages: newImages.length,
-      imagesToDelete,
-    });
-  
+  ) => {  
     try {
       const formData = new FormData();
-
-      console.log("Changed Fields antes do envio:", JSON.stringify(changedFields));
       const json = JSON.stringify(changedFields);
       const dadosBlob = new Blob([json], { type: "application/json" });
       formData.append("dados", dadosBlob); 

@@ -1,10 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "../components/ui/skeleton";
-import { MessageSquare, PawPrint } from "lucide-react";
+import { NotepadText, PawPrint } from "lucide-react";
 import type { animaisProp } from "../types/animaisProp";
 import OrganizationAnimalCard from "./OrganizationAnimalCard";
 import { usePaginationStore } from "@/stores/usePaginationStore";
 import { useEffect } from "react";
+import OrganizacaoConfig from "./OrganizacaoConfig";
 
 const AnimalDetails = ({ animais, carregando }: animaisProp) => {
   const {setAnimalLength} = usePaginationStore()
@@ -22,9 +23,9 @@ const AnimalDetails = ({ animais, carregando }: animaisProp) => {
           <PawPrint className="w-4 h-4 mr-2" />
           Animais
         </TabsTrigger>
-        <TabsTrigger value="messages">
-          <MessageSquare className="w-4 h-4 mr-2" />
-          Mensagens
+        <TabsTrigger value="organizacao">
+          <NotepadText className="w-4 h-4 mr-2" />
+          Organização
         </TabsTrigger>
       </TabsList>
 
@@ -45,6 +46,9 @@ const AnimalDetails = ({ animais, carregando }: animaisProp) => {
             )}
           </div>
         )}
+      </TabsContent>
+      <TabsContent value="organizacao">
+       <OrganizacaoConfig/>
       </TabsContent>
     </Tabs>
   );

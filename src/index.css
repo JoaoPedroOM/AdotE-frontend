@@ -68,10 +68,10 @@ body, html {
     #FFEDD5 0%, 
     #FED7AA 50%, 
     #FDBA74 100% 
-  );
+  )!important;
   background-size: 200% 200%;
-  animation: gradientShift 15s ease infinite;
-  z-index: -3;
+  animation: gradientShift 15s ease infinite !important;
+  z-index: -3 !important;
   pointer-events: none;
 }
 
@@ -89,11 +89,11 @@ body, html {
   height: 100vh;
   background: 
   url("./assets/img/gradiente.png"),
-  linear-gradient(160deg, #FCD34D88 0%, #FBBF24AA 100%);
+  linear-gradient(160deg, #FCD34D88 0%, #FBBF24AA 100%) !important;
   background-size: cover;
   background-position: center;
-  mix-blend-mode: soft-light;
-  z-index: -1;
+  mix-blend-mode: soft-light !important;
+  z-index: -1 !important;
   pointer-events: none;
   opacity: 0.7;
 }
@@ -108,10 +108,10 @@ body, html {
     circle at 50% 50%,
     transparent 20%,
     #FDBA74 90%
-  );
-  z-index: -2;
+  ) !important;
+  z-index: -2 !important;
   pointer-events: none;
-  transition: opacity 0.5s;
+  transition: opacity 0.5s !important;
 }
 
 @layer base {
