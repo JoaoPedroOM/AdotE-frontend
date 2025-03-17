@@ -11,11 +11,19 @@ import {
   organizacaoSchema,
 } from "@/schemas/organizacaoSchema";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { obterDetalhesOrganizacao } from "@/services/animalService";
 import { Skeleton } from "./ui/skeleton";
+import { useAnimal } from "@/hooks/useAnimal";
+import { toast } from "sonner";
 
 const OrganizacaoConfig = () => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentPixId, setCurrentPixId] = useState<number | null>(null);
+
+  const { cadastroChavePix, atualizarChavePix } = useAnimal();
+  const queryClient = useQueryClient();
+
   const { organizacao } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -30,8 +38,6 @@ const OrganizacaoConfig = () => {
     staleTime: 20 * 60 * 1000,
   });
 
-  console.log(organizacaoData);
-
   const {
     register,
     reset,
@@ -40,23 +46,59 @@ const OrganizacaoConfig = () => {
   } = useForm<OrganizacaoFormValues>({
     resolver: zodResolver(organizacaoSchema),
     mode: "onBlur",
-    defaultValues: {
-      tipoChave: "Telefone",
-      chave: "",
-    },
   });
 
   const openModal = () => {
+    if (organizacaoData?.chavesPix?.length > 0) {
+      const chaveExistente = organizacaoData.chavesPix[0];
+      reset({
+        tipoChave: chaveExistente.tipo,
+        chave: chaveExistente.chave,
+      });
+      setCurrentPixId(chaveExistente.id);
+      setIsEditing(true);
+    } else {
+      reset({
+        tipoChave: "Telefone",
+        chave: "",
+      });
+      setIsEditing(false);
+    }
     setIsModalOpen(true);
   };
 
   async function onSubmit(data: OrganizacaoFormValues) {
-    console.log(data);
-    reset({
-      chave: "",
-    });
-    setIsModalOpen(false);
+    try {
+      if (isEditing && currentPixId) {
+        await atualizarChavePix(
+          currentPixId,
+          data.tipoChave,
+          data.chave,
+        );
+        toast.success("Chave atualizada com sucesso!");
+      } else {
+        await cadastroChavePix(
+          data.tipoChave,
+          data.chave,
+          Number(organizacao?.organizacao_id)
+        );
+        toast.success("Chave cadastrada com sucesso!");
+      }
+      
+      queryClient.invalidateQueries({
+        queryKey: ["organizacaoData", Number(organizacao?.organizacao_id)],
+      });
+      reset();
+      setIsModalOpen(false);
+    } catch (error) {
+      toast.error(
+        isEditing 
+          ? "Erro ao atualizar chave pix!" 
+          : "Erro ao cadastrar chave pix!"
+      );
+    }
   }
+
 
   return (
     <div className="grid gap-6 md:grid-cols-3 lg:gap-10 sm-max:justify-items-center">
@@ -69,7 +111,18 @@ const OrganizacaoConfig = () => {
           </h2>
 
           <div className="space-y-4">
-            {false ? (
+            {isLoading ? (
+              <div className="md:p-4 p-0 rounded-lg">
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-4 rounded-full" />
+                    <Skeleton className="h-4 w-24 rounded-md" />
+                  </div>
+                  <Skeleton className="h-8 w-20 rounded-md" />
+                </div>
+                <Skeleton className="h-8 w-full rounded-md" />
+              </div>
+            ) : organizacaoData && organizacaoData.chavesPix.length > 0 ? (
               <div className="md:p-4 p-0 rounded-lg">
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="font-medium md:text-base text-sm flex items-center gap-2 text-gray-700">
@@ -86,7 +139,7 @@ const OrganizacaoConfig = () => {
                   </Button>
                 </div>
                 <p className="bg-[#eeeeee] py-2 px-3 rounded text-sm break-all text-gray-900 font-semibold">
-                  (00) 00000-0000
+                  {organizacaoData.chavesPix[0].chave}
                 </p>
               </div>
             ) : (
@@ -110,7 +163,7 @@ const OrganizacaoConfig = () => {
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="w-full max-w-md z-[999] rounded-lg">
             <DialogTitle className="font-semibold text-gray-800 mb-2 text-2xl font-main">
-              Chave PIX
+            {isEditing ? 'Atualizar Chave PIX' : 'Cadastrar Chave PIX'}
               <p className="font-tertiary text-base font-medium leading-[1.5]">
                 Registre sua chave PIX para começar a receber doações de
                 apoiadores e fortalecer sua missão de resgatar e cuidar de
@@ -159,7 +212,7 @@ const OrganizacaoConfig = () => {
               </div>
               <DialogFooter className="mt-4 flex justify-end gap-2">
                 <Button className="text-white" disabled={isSubmitting}>
-                  Salvar
+                {isEditing ? 'Atualizar' : 'Cadastrar'}
                 </Button>
               </DialogFooter>
             </form>
@@ -196,7 +249,6 @@ const OrganizacaoConfig = () => {
             "Erro ao carregar informações da organização."}
         </p>
       )}
-      {/* <CardInfoOrganizacao organizacaoData={organizacaoData} /> */}
     </div>
   );
 };

@@ -133,19 +133,16 @@ export const organizacaoDetails = async (
   sexo: string
 ) => {
   try {
-    const response = await api.get(
-      `/organizacao/find`,
-      {
-        params: {
-          id,
-          page,
-          tipo,
-          idade,
-          porte,
-          sexo,
-        },
-      }
-    );
+    const response = await api.get(`/organizacao/find`, {
+      params: {
+        id,
+        page,
+        tipo,
+        idade,
+        porte,
+        sexo,
+      },
+    });
     return response.data;
   } catch (error) {
     throw error;
@@ -154,12 +151,36 @@ export const organizacaoDetails = async (
 
 export const obterDetalhesOrganizacao = async (id: number) => {
   try {
-    const response = await api.get(
-      `/organizacao/find`,
+    const response = await api.get(`/organizacao/find`, {
+      params: {
+        id,
+        IncludeAnimais: false,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const cadastroChavePixService = async (
+  tipoChave: string,
+  chave: string,
+  organizacao_id: number
+) => {
+  const token = Cookies.get("authToken");
+
+  try {
+    const response = await api.post(
+      "/chavepix",
       {
-        params: {
-          id,
-          IncludeAnimais: false,  
+        tipo: tipoChave,
+        chave: chave,
+        organizacao_id: organizacao_id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -169,5 +190,21 @@ export const obterDetalhesOrganizacao = async (id: number) => {
   }
 };
 
+export const atualizarChavePixService = async (
+  pixId: number,
+  tipo: string,
+  chave: string
+) => {
+  const token = Cookies.get("authToken");
 
-
+  const response = await api.patch(
+    `/chavepix/${pixId}`,
+    { tipo, chave },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};
