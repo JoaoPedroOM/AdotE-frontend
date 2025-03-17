@@ -10,9 +10,27 @@ import {
   OrganizacaoFormValues,
   organizacaoSchema,
 } from "@/schemas/organizacaoSchema";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useQuery } from "@tanstack/react-query";
+import { obterDetalhesOrganizacao } from "@/services/animalService";
+import { Skeleton } from "./ui/skeleton";
 
 const OrganizacaoConfig = () => {
+  const { organizacao } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const {
+    data: organizacaoData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["organizacaoData", Number(organizacao?.organizacao_id)],
+    queryFn: () =>
+      obterDetalhesOrganizacao(Number(organizacao?.organizacao_id)),
+    staleTime: 20 * 60 * 1000,
+  });
+
+  console.log(organizacaoData);
 
   const {
     register,
@@ -36,7 +54,7 @@ const OrganizacaoConfig = () => {
     console.log(data);
     reset({
       chave: "",
-    })
+    });
     setIsModalOpen(false);
   }
 
@@ -150,7 +168,35 @@ const OrganizacaoConfig = () => {
       </div>
 
       {/* Informações da Organização - Lateral */}
-      <CardInfoOrganizacao />
+      {isLoading ? (
+        <div className="sticky top-6 sm-max:w-full">
+          <div className="rounded-lg border bg-[#f7fafc] text-gray-900 shadow-sm">
+            <div className="p-6">
+              <h3 className="text-xl font-medium mb-4 font-main">
+                Informações da Organização
+              </h3>
+
+              <div className="space-y-4">
+                <Skeleton className="w-full h-6" />
+                <Skeleton className="w-full h-6" />
+                <Skeleton className="w-full h-6" />
+                <Skeleton className="w-full h-6" />
+                <Skeleton className="w-full h-6" />
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <CardInfoOrganizacao organizacaoData={organizacaoData} />
+      )}
+
+      {error && (
+        <p className="text-red-500">
+          {(error as Error).message ||
+            "Erro ao carregar informações da organização."}
+        </p>
+      )}
+      {/* <CardInfoOrganizacao organizacaoData={organizacaoData} /> */}
     </div>
   );
 };

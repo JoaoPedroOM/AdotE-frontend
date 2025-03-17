@@ -1,3 +1,5 @@
+import { Animal } from "./animal";
+
 export interface Endereco {
   id: number;
   cep: string;
@@ -7,6 +9,12 @@ export interface Endereco {
   estado: string;
 }
 
+export interface ChavePix {
+  id: number;
+  chave: string;
+  tipo: string;
+}
+
 export interface Organizacao {
   id: number;
   nome: string;
@@ -14,4 +22,6 @@ export interface Organizacao {
   cnpj: string;
   endereco: Endereco;  
   email: string;
+  animais?: Animal[];
+  chavesPix?: ChavePix[];
 }

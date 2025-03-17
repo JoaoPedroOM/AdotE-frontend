@@ -8,7 +8,7 @@ const api = axios.create({
 
 export const loginService = async (email: string, senha: string) => {
   try {
-    const response = await api.post("/adote/auth/login", { email, senha });
+    const response = await api.post("/auth/login", { email, senha });
     return response.data;
   } catch (error: any) {
     console.error(
@@ -28,7 +28,7 @@ export const cadastroService = async (
   senha: string,
 ) => {
   try {
-    const response = await api.post("/adote/auth/register", {
+    const response = await api.post("/auth/register", {
       nome,
       numero,
       cnpj, 
