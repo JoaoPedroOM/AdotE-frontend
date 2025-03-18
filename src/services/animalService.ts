@@ -197,14 +197,34 @@ export const atualizarChavePixService = async (
 ) => {
   const token = Cookies.get("authToken");
 
-  const response = await api.patch(
-    `/chavepix/${pixId}`,
+  const response = await api.patch(`/chavepix/${pixId}`,
     { tipo, chave },
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
   return response.data;
+};
+
+export const generateQrCode = async (
+  tipo: string,
+  chave: string,
+  nome: string,
+  cidade: string,
+) => {
+
+  try {
+    const response = await api.post("/qrcodepix", {
+      tipo,
+      chave,
+      nome,
+      cidade,
+    },
+  );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };

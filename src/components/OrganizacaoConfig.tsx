@@ -73,7 +73,7 @@ const OrganizacaoConfig = () => {
         await atualizarChavePix(
           currentPixId,
           data.tipoChave,
-          data.chave,
+          data.chave
         );
         toast.success("Chave atualizada com sucesso!");
       } else {
@@ -84,7 +84,7 @@ const OrganizacaoConfig = () => {
         );
         toast.success("Chave cadastrada com sucesso!");
       }
-      
+
       queryClient.invalidateQueries({
         queryKey: ["organizacaoData", Number(organizacao?.organizacao_id)],
       });
@@ -92,13 +92,12 @@ const OrganizacaoConfig = () => {
       setIsModalOpen(false);
     } catch (error) {
       toast.error(
-        isEditing 
-          ? "Erro ao atualizar chave pix!" 
+        isEditing
+          ? "Erro ao atualizar chave pix!"
           : "Erro ao cadastrar chave pix!"
       );
     }
   }
-
 
   return (
     <div className="grid gap-6 md:grid-cols-3 lg:gap-10 sm-max:justify-items-center">
@@ -163,7 +162,7 @@ const OrganizacaoConfig = () => {
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="w-full max-w-md z-[999] rounded-lg">
             <DialogTitle className="font-semibold text-gray-800 mb-2 text-2xl font-main">
-            {isEditing ? 'Atualizar Chave PIX' : 'Cadastrar Chave PIX'}
+              {isEditing ? "Atualizar Chave PIX" : "Cadastrar Chave PIX"}
               <p className="font-tertiary text-base font-medium leading-[1.5]">
                 Registre sua chave PIX para começar a receber doações de
                 apoiadores e fortalecer sua missão de resgatar e cuidar de
@@ -184,7 +183,7 @@ const OrganizacaoConfig = () => {
                   <option value="Email">Email</option>
                   <option value="CPF">CPF</option>
                   <option value="CNPJ">CNPJ</option>
-                  <option value="ChaveAleatoria">Chave aleatória</option>
+                  <option value="Outro">Chave aleatória</option>
                 </select>
                 <ErrorMessage
                   errors={errors}
@@ -212,7 +211,7 @@ const OrganizacaoConfig = () => {
               </div>
               <DialogFooter className="mt-4 flex justify-end gap-2">
                 <Button className="text-white" disabled={isSubmitting}>
-                {isEditing ? 'Atualizar' : 'Cadastrar'}
+                  {isEditing ? "Atualizar" : "Cadastrar"}
                 </Button>
               </DialogFooter>
             </form>

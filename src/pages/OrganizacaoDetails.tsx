@@ -6,7 +6,7 @@ import { organizacaoDetails } from "@/services/animalService";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
-import { Filter } from "lucide-react";
+import { Copy, Filter, QrCode } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -31,8 +31,16 @@ import { Animal } from "@/models/animal";
 import { Helmet } from "react-helmet";
 import { formatCNPJ, formatPhoneNumber } from "@/utils/formatters";
 import LocationMap from "@/components/LocationMap";
+import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import PixQrCodeModal from "@/components/PixQrCodeModal";
 
 const OrganizacaoDetails = () => {
+  const [showQrModal, setShowQrModal] = useState(false);
   const { id } = useParams();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -116,7 +124,13 @@ const OrganizacaoDetails = () => {
               </div>
 
               <div className="mt-10 bg-white shadow-lg rounded-lg lg:p-8 p-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div
+                  className={`grid grid-cols-1 ${
+                    organizacao && organizacao.chavesPix?.length > 0
+                      ? "lg:grid-cols-4 sm:grid-cols-2"
+                      : "lg:grid-cols-3 sm:grid-cols-2"
+                  } gap-6`}
+                >
                   {/* Detalhes da Organização */}
                   <div className="font-tertiary">
                     <h2 className="font-main text-xl font-semibold text-[#30302E] mb-1">
@@ -176,6 +190,64 @@ const OrganizacaoDetails = () => {
                       </span>
                     </p>
                   </div>
+                  {/* Doação */}
+                  {organizacao && organizacao.chavesPix?.length > 0 ? (
+                    <div className="font-tertiary bg-orange-50 p-6 pt-0 rounded-lg shadow-md">
+                      <h2 className="font-main text-xl font-semibold text-[#D97706] mb-4 flex items-center gap-2">
+                        Doação
+                      </h2>
+
+                      {/* Chave Pix */}
+                      <div className="flex items-center gap-1">
+                        <span className="text-gray-600 whitespace-nowrap">
+                          Chave Pix:
+                        </span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="font-medium text-gray-800 truncate max-w-[200px]">
+                              {organizacao.chavesPix[0].chave}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent className="z-[999]">
+                            {organizacao.chavesPix[0].chave}
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+
+                      {/* Botões */}
+                      <div className="flex flex-col sm:flex-row gap-2 mt-2">
+                        <Button
+                          onClick={() => {
+                            navigator.clipboard.writeText(
+                              organizacao.chavesPix[0].chave
+                            );
+                            toast.success("Chave copiada!");
+                          }}
+                          variant="outline"
+                          className="w-full sm:w-auto bg-orange-100 hover:bg-orange-200 border-orange-200 text-orange-600"
+                        >
+                          <Copy className="h-4 w-4 mr-2" />
+                          Copiar
+                        </Button>
+
+                        <Button
+                          onClick={() => setShowQrModal(true)}
+                          className="w-full sm:w-auto bg-orange-100 hover:bg-orange-200 border-orange-200 text-orange-600"
+                        >
+                          <QrCode className="h-4 w-4 mr-2" />
+                          QR Code
+                        </Button>
+                      </div>
+                      <PixQrCodeModal
+                        isOpen={showQrModal}
+                        onClose={() => setShowQrModal(false)}
+                        chavePix={organizacao.chavesPix[0].chave}
+                        pixTipo={organizacao.chavesPix[0].tipo}
+                        organizationName={organizacao.nome}
+                        city={organizacao.endereco?.cidade || ""}
+                      />
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </>
