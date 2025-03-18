@@ -12,17 +12,21 @@ import {
 } from "@/schemas/organizacaoSchema";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { obterDetalhesOrganizacao } from "@/services/animalService";
+import {
+  obterDadosChavePixService,
+  obterDetalhesOrganizacao,
+} from "@/services/animalService";
 import { Skeleton } from "./ui/skeleton";
 import { useAnimal } from "@/hooks/useAnimal";
 import { toast } from "sonner";
 
 const OrganizacaoConfig = () => {
+  const queryClient = useQueryClient();
+
   const [isEditing, setIsEditing] = useState(false);
   const [currentPixId, setCurrentPixId] = useState<number | null>(null);
 
   const { cadastroChavePix, atualizarChavePix } = useAnimal();
-  const queryClient = useQueryClient();
 
   const { organizacao } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,6 +43,17 @@ const OrganizacaoConfig = () => {
   });
 
   const {
+    data: dadosChavePix,
+    isLoading: loadingDadosChavePix,
+    error: errorDadosChavePix,
+  } = useQuery({
+    queryKey: ["dadosChavePix", Number(organizacao?.organizacao_id)],
+    queryFn: () =>
+      obterDadosChavePixService(Number(organizacao?.organizacao_id)),
+    staleTime: 20 * 60 * 1000,
+  });
+
+  const {
     register,
     reset,
     handleSubmit,
@@ -49,8 +64,8 @@ const OrganizacaoConfig = () => {
   });
 
   const openModal = () => {
-    if (organizacaoData?.chavesPix?.length > 0) {
-      const chaveExistente = organizacaoData.chavesPix[0];
+    if (dadosChavePix.length > 0) {
+      const chaveExistente = dadosChavePix[0];
       reset({
         tipoChave: chaveExistente.tipo,
         chave: chaveExistente.chave,
@@ -70,11 +85,7 @@ const OrganizacaoConfig = () => {
   async function onSubmit(data: OrganizacaoFormValues) {
     try {
       if (isEditing && currentPixId) {
-        await atualizarChavePix(
-          currentPixId,
-          data.tipoChave,
-          data.chave
-        );
+        await atualizarChavePix(currentPixId, data.tipoChave, data.chave);
         toast.success("Chave atualizada com sucesso!");
       } else {
         await cadastroChavePix(
@@ -84,9 +95,8 @@ const OrganizacaoConfig = () => {
         );
         toast.success("Chave cadastrada com sucesso!");
       }
-
       queryClient.invalidateQueries({
-        queryKey: ["organizacaoData", Number(organizacao?.organizacao_id)],
+        queryKey: ["dadosChavePix", Number(organizacao?.organizacao_id)],
       });
       reset();
       setIsModalOpen(false);
@@ -110,7 +120,13 @@ const OrganizacaoConfig = () => {
           </h2>
 
           <div className="space-y-4">
-            {isLoading ? (
+            {errorDadosChavePix && (
+              <p className="text-red-500">
+                {(error as Error).message ||
+                  "Erro ao carregar informações sobre o pix."}
+              </p>
+            )}
+            {loadingDadosChavePix ? (
               <div className="md:p-4 p-0 rounded-lg">
                 <div className="flex justify-between items-center mb-2">
                   <div className="flex items-center gap-2">
@@ -121,7 +137,7 @@ const OrganizacaoConfig = () => {
                 </div>
                 <Skeleton className="h-8 w-full rounded-md" />
               </div>
-            ) : organizacaoData && organizacaoData.chavesPix.length > 0 ? (
+            ) : dadosChavePix && dadosChavePix.length > 0 ? (
               <div className="md:p-4 p-0 rounded-lg">
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="font-medium md:text-base text-sm flex items-center gap-2 text-gray-700">
@@ -138,7 +154,7 @@ const OrganizacaoConfig = () => {
                   </Button>
                 </div>
                 <p className="bg-[#eeeeee] py-2 px-3 rounded text-sm break-all text-gray-900 font-semibold">
-                  {organizacaoData.chavesPix[0].chave}
+                  {dadosChavePix[0].chave}
                 </p>
               </div>
             ) : (

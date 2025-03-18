@@ -10,7 +10,7 @@ export const cadastroAnimalService = async (formData: FormData) => {
   const token = Cookies.get("authToken");
 
   try {
-    const response = await api.post("/animal/create", formData, {
+    const response = await api.post("/animal", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -28,7 +28,7 @@ export const updateAnimalService = async (
   const token = Cookies.get("authToken");
 
   try {
-    const response = await api.patch(`/animal/update/${animalId}`, formData, {
+    const response = await api.patch(`/animal/${animalId}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -44,14 +44,15 @@ export const animaisCadastrados = async (id: any, page: number) => {
   const token = Cookies.get("authToken");
 
   try {
-    const response = await api.get(
-      `/animal/find/all?orgId=${id}&page=${page}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await api.get(`/animal/organizacao/${id}`, {
+      params: {
+        page,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     return response.data;
   } catch (error) {
     throw error;
@@ -62,7 +63,7 @@ export const deleteAnimalService = async (id: number) => {
   const token = Cookies.get("authToken");
 
   try {
-    const response = await api.delete(`/animal/delete?animalId=${id}`, {
+    const response = await api.delete(`/animal/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -81,7 +82,7 @@ export const animaisDisponiveis = async (
   sexo: string
 ) => {
   try {
-    const response = await api.get("/animal/find/all", {
+    const response = await api.get("/animal", {
       params: {
         page,
         tipo,
@@ -98,7 +99,7 @@ export const animaisDisponiveis = async (
 
 export const animalProfile = async (id: number) => {
   try {
-    const response = await api.get(`/animal/find?id=${id}`);
+    const response = await api.get(`/animal/${id}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -117,14 +118,14 @@ export const organizacoesDisponiveis = async (
       ...(cidade && { cidade }),
     };
 
-    const response = await api.get("/organizacao/find/all", { params });
+    const response = await api.get("/organizacao", { params });
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const organizacaoDetails = async (
+export const animaisByOrganizacaoService = async (
   id: number,
   page: number,
   tipo: string,
@@ -133,9 +134,9 @@ export const organizacaoDetails = async (
   sexo: string
 ) => {
   try {
-    const response = await api.get(`/organizacao/find`, {
+    const response = await api.get(`/animal/organizacao/${id}`, {
       params: {
-        id,
+        // id,
         page,
         tipo,
         idade,
@@ -151,12 +152,17 @@ export const organizacaoDetails = async (
 
 export const obterDetalhesOrganizacao = async (id: number) => {
   try {
-    const response = await api.get(`/organizacao/find`, {
-      params: {
-        id,
-        IncludeAnimais: false,
-      },
-    });
+    const response = await api.get(`/organizacao/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// FORCEI O ERRO AQUI
+export const obterDadosChavePixService = async (id: number) => {
+  try {
+    const response = await api.get(`/chavepix/organizacao/${id}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -197,13 +203,14 @@ export const atualizarChavePixService = async (
 ) => {
   const token = Cookies.get("authToken");
 
-  const response = await api.patch(`/chavepix/${pixId}`,
+  const response = await api.patch(
+    `/chavepix/${pixId}`,
     { tipo, chave },
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    },
+    }
   );
   return response.data;
 };
@@ -212,17 +219,15 @@ export const generateQrCode = async (
   tipo: string,
   chave: string,
   nome: string,
-  cidade: string,
+  cidade: string
 ) => {
-
   try {
     const response = await api.post("/qrcodepix", {
       tipo,
       chave,
       nome,
       cidade,
-    },
-  );
+    });
     return response.data;
   } catch (error) {
     throw error;

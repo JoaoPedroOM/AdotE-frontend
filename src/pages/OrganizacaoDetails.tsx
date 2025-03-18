@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import AnimalCard from "@/components/AnimalCard";
 import Navbar from "@/components/global/Navbar";
 
-import { organizacaoDetails } from "@/services/animalService";
+import {
+  animaisByOrganizacaoService,
+  obterDadosChavePixService,
+  obterDetalhesOrganizacao,
+} from "@/services/animalService";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
@@ -79,13 +83,41 @@ const OrganizacaoDetails = () => {
   };
 
   const {
-    data: organizacao = [],
+    data: organizacaoData,
     isLoading,
-    error,
+    error: errorOrganizacaoData,
   } = useQuery({
-    queryKey: ["organizacao", Number(id), currentPage, type, age, size, gender],
+    queryKey: ["organizacaoData", Number(id)],
+    queryFn: () => obterDetalhesOrganizacao(Number(id)),
+    staleTime: 20 * 60 * 1000,
+  });
+
+  const {
+    data: dadosChavePix,
+    isLoading: loadingDadosChavePix,
+    error: errorDadosChavePix,
+  } = useQuery({
+    queryKey: ["dadosChavePix", Number(id)],
+    queryFn: () => obterDadosChavePixService(Number(id)),
+    staleTime: 20 * 60 * 1000,
+  });
+
+  const {
+    data: animaisByOrganizacao = [],
+    isLoading: animaisIsLoading,
+    error: animaisError,
+  } = useQuery({
+    queryKey: [
+      "animaisByOrganizacao",
+      Number(id),
+      currentPage,
+      type,
+      age,
+      size,
+      gender,
+    ],
     queryFn: () =>
-      organizacaoDetails(
+      animaisByOrganizacaoService(
         Number(id),
         currentPage,
         type && type !== "allTypes" ? type.toUpperCase() : "",
@@ -97,7 +129,7 @@ const OrganizacaoDetails = () => {
   });
 
   const handlePageChange = (newPage: number) => {
-    if (newPage >= 0 && newPage < organizacao.animais.totalPages) {
+    if (newPage >= 0 && newPage < animaisByOrganizacao.totalPages) {
       setSearchParams({ page: newPage.toString() });
     }
   };
@@ -110,7 +142,39 @@ const OrganizacaoDetails = () => {
       <div className="content-layer">
         <Navbar />
         <main className="p-4 mx-auto max-w-[1300px]">
-          {isLoading ? (
+          {errorOrganizacaoData ? (
+            <div className="flex items-center justify-center bg-red-50 border border-red-300 p-4 rounded-lg mt-6">
+              <div className="flex items-center gap-4">
+                {/* Ícone de erro */}
+                <div className="p-3 bg-red-100 rounded-full">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="h-8 w-8 text-red-600"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 9v2m0 4h.01M21 12c0 4.972-4.029 9-9 9s-9-4.028-9-9 4.029-9 9-9 9 4.028 9 9z"
+                    />
+                  </svg>
+                </div>
+
+                <div>
+                  <p className="text-red-600 font-medium text-lg font-main">
+                    Oops! Algo deu errado.
+                  </p>
+                  <p className="text-red-500 mt-2 font-tertiary">
+                    Não conseguimos carregar as informações da organização.
+                    Tente novamente mais tarde.
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : isLoading && loadingDadosChavePix ? (
             <>
               <Skeleton className="md:w-1/2 w-full h-[45px] mx-auto mt-5" />
               <Skeleton className="w-full md:h-[212px] h-[400px] mt-5" />
@@ -119,14 +183,14 @@ const OrganizacaoDetails = () => {
             <>
               <div className="mx-auto w-full flex flex-col items-center justify-center mt-5">
                 <h1 className="font-main font-bold leading-[1] text-[#D97706] text-5xl">
-                  {organizacao.nome}
+                  {organizacaoData.nome}
                 </h1>
               </div>
 
               <div className="mt-10 bg-white shadow-lg rounded-lg lg:p-8 p-4">
                 <div
                   className={`grid grid-cols-1 ${
-                    organizacao && organizacao.chavesPix?.length > 0
+                    organizacaoData && dadosChavePix && dadosChavePix.length > 0
                       ? "lg:grid-cols-4 sm:grid-cols-2"
                       : "lg:grid-cols-3 sm:grid-cols-2"
                   } gap-6`}
@@ -139,13 +203,13 @@ const OrganizacaoDetails = () => {
                     <p className="text-lg text-gray-600">
                       Nome:{" "}
                       <span className="font-bold text-gray-800 text-[17px]">
-                        {organizacao.nome}
+                        {organizacaoData.nome}
                       </span>
                     </p>
                     <p className="text-lg text-gray-600">
                       CNPJ:{" "}
                       <span className="font-bold text-gray-800 text-base">
-                        {formatCNPJ(organizacao.cnpj)}
+                        {formatCNPJ(organizacaoData.cnpj)}
                       </span>
                     </p>
                   </div>
@@ -158,18 +222,18 @@ const OrganizacaoDetails = () => {
                     <p className="text-lg text-gray-600">
                       Rua:{" "}
                       <span className="font-bold text-gray-800 text-[17px]">
-                        {organizacao.endereco?.rua},{" "}
-                        {organizacao.endereco?.numero}
+                        {organizacaoData.endereco?.rua},{" "}
+                        {organizacaoData.endereco?.numero}
                       </span>
                     </p>
                     <p className="text-lg text-gray-600">
                       Cidade:{" "}
                       <span className="font-bold text-gray-800 text-[17px]">
-                        {organizacao.endereco?.cidade},{" "}
-                        {organizacao.endereco?.estado}
+                        {organizacaoData.endereco?.cidade},{" "}
+                        {organizacaoData.endereco?.estado}
                       </span>
                     </p>
-                    <LocationMap localizacao={organizacao.endereco} />
+                    <LocationMap localizacao={organizacaoData.endereco} />
                   </div>
 
                   {/* Contato */}
@@ -180,78 +244,115 @@ const OrganizacaoDetails = () => {
                     <p className="text-lg text-gray-600">
                       Email:{" "}
                       <span className="font-bold text-gray-800 text-[17px]">
-                        {organizacao.email}
+                        {organizacaoData.email}
                       </span>
                     </p>
                     <p className="text-lg text-gray-600">
                       Número:{" "}
                       <span className="font-bold text-gray-800 text-base">
-                        {formatPhoneNumber(organizacao.numero)}
+                        {formatPhoneNumber(organizacaoData.numero)}
                       </span>
                     </p>
                   </div>
+
                   {/* Doação */}
-                  {organizacao && organizacao.chavesPix?.length > 0 ? (
-                    <div className="font-tertiary bg-orange-50 p-6 pt-0 rounded-lg shadow-md">
-                      <h2 className="font-main text-xl font-semibold text-[#D97706] mb-4 flex items-center gap-2">
-                        Doação
-                      </h2>
-
-                      {/* Chave Pix */}
-                      <div className="flex items-center gap-1">
-                        <span className="text-gray-600 whitespace-nowrap">
-                          Chave Pix:
-                        </span>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="font-medium text-gray-800 truncate max-w-[200px]">
-                              {organizacao.chavesPix[0].chave}
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent className="z-[999]">
-                            {organizacao.chavesPix[0].chave}
-                          </TooltipContent>
-                        </Tooltip>
+                  {errorDadosChavePix ? (
+                    <div className="flex items-center justify-center bg-red-50 border border-red-300 p-4 rounded-lg mt-6">
+                      <div className="flex items-center gap-4">
+                        {/* Ícone de erro */}
+                        <div className="p-3 bg-red-100 rounded-full">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            className="h-8 w-8 text-red-600"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M12 9v2m0 4h.01M21 12c0 4.972-4.029 9-9 9s-9-4.028-9-9 4.029-9 9-9 9 4.028 9 9z"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-red-600 font-medium text-lg font-main">
+                            Oops! Algo deu errado.
+                          </p>
+                          <p className="text-red-500 mt-2 font-tertiary">
+                            Não conseguimos carregar os dados da chave Pix.
+                            Tente novamente mais tarde.
+                          </p>
+                        </div>
                       </div>
-
-                      {/* Botões */}
-                      <div className="flex flex-col sm:flex-row gap-2 mt-2">
-                        <Button
-                          onClick={() => {
-                            navigator.clipboard.writeText(
-                              organizacao.chavesPix[0].chave
-                            );
-                            toast.success("Chave copiada!");
-                          }}
-                          variant="outline"
-                          className="w-full sm:w-auto bg-orange-100 hover:bg-orange-200 border-orange-200 text-orange-600"
-                        >
-                          <Copy className="h-4 w-4 mr-2" />
-                          Copiar
-                        </Button>
-
-                        <Button
-                          onClick={() => setShowQrModal(true)}
-                          className="w-full sm:w-auto bg-orange-100 hover:bg-orange-200 border-orange-200 text-orange-600"
-                        >
-                          <QrCode className="h-4 w-4 mr-2" />
-                          QR Code
-                        </Button>
-                      </div>
-                      <PixQrCodeModal
-                        isOpen={showQrModal}
-                        onClose={() => setShowQrModal(false)}
-                        chavePix={organizacao.chavesPix[0].chave}
-                        pixTipo={organizacao.chavesPix[0].tipo}
-                        organizationName={organizacao.nome}
-                        city={organizacao.endereco?.cidade || ""}
-                      />
                     </div>
-                  ) : null}
+                  ) : (
+                    dadosChavePix &&
+                    dadosChavePix.length > 0 && (
+                      <div className="font-tertiary bg-orange-50 p-6 pt-0 rounded-lg shadow-md">
+                        <h2 className="font-main text-xl font-semibold text-[#D97706] mb-4 flex items-center gap-2">
+                          Doação
+                        </h2>
+
+                        {/* Chave Pix */}
+                        <div className="flex items-center gap-1">
+                          <span className="text-gray-600 whitespace-nowrap">
+                            Chave Pix:
+                          </span>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="font-medium text-gray-800 truncate max-w-[200px]">
+                                {dadosChavePix[0].chave}
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent className="z-[999]">
+                              {dadosChavePix[0].chave}
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+
+                        {/* Botões */}
+                        <div className="flex flex-col sm:flex-row gap-2 mt-2">
+                          <Button
+                            onClick={() => {
+                              navigator.clipboard.writeText(
+                                dadosChavePix[0].chave
+                              );
+                              toast.success("Chave copiada!");
+                            }}
+                            variant="outline"
+                            className="w-full sm:w-auto bg-orange-100 hover:bg-orange-200 border-orange-200 text-orange-600"
+                          >
+                            <Copy className="h-4 w-4 mr-2" />
+                            Copiar
+                          </Button>
+
+                          <Button
+                            onClick={() => setShowQrModal(true)}
+                            className="w-full sm:w-auto bg-orange-100 hover:bg-orange-200 border-orange-200 text-orange-600"
+                          >
+                            <QrCode className="h-4 w-4 mr-2" />
+                            QR Code
+                          </Button>
+                        </div>
+
+                        <PixQrCodeModal
+                          isOpen={showQrModal}
+                          onClose={() => setShowQrModal(false)}
+                          chavePix={dadosChavePix[0].chave}
+                          pixTipo={dadosChavePix[0].tipo}
+                          organizationName={organizacaoData.nome}
+                          city={organizacaoData.endereco?.cidade || ""}
+                        />
+                      </div>
+                    )
+                  )}
                 </div>
               </div>
             </>
           )}
+
           <section className="mt-10">
             <div className="flex justify-between items-center">
               <div className="text-lg font-bold font-tertiary">Filtros</div>
@@ -377,7 +478,7 @@ const OrganizacaoDetails = () => {
 
           {/* Cards */}
           <section className="mt-5">
-            {isLoading ? (
+            {animaisIsLoading ? (
               <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4 mb-8">
                 <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
                 <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
@@ -390,9 +491,9 @@ const OrganizacaoDetails = () => {
               </div>
             ) : (
               <>
-                {organizacao.animais.content.length > 0 ? (
+                {animaisByOrganizacao.content.length > 0 ? (
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8 justify-items-center">
-                    {organizacao.animais.content?.map((animal: Animal) => (
+                    {animaisByOrganizacao.content?.map((animal: Animal) => (
                       <AnimalCard key={animal.id} animal={animal} />
                     ))}
                   </div>
@@ -400,7 +501,7 @@ const OrganizacaoDetails = () => {
                   <p className="font-main text-2xl">Nenhum animal encontrado</p>
                 )}
                 {/* Paginação */}
-                {organizacao.animais.totalPages > 1 && (
+                {animaisByOrganizacao.totalPages > 1 && (
                   <Pagination className="my-5">
                     <PaginationContent>
                       <PaginationItem>
@@ -418,7 +519,7 @@ const OrganizacaoDetails = () => {
                         />
                       </PaginationItem>
 
-                      {[...Array(organizacao.animais.totalPages)].map(
+                      {[...Array(animaisByOrganizacao.totalPages)].map(
                         (_, pageNumber) => (
                           <PaginationItem key={pageNumber}>
                             <PaginationLink
@@ -440,19 +541,19 @@ const OrganizacaoDetails = () => {
                         <PaginationNext
                           href={`?page=${Math.min(
                             currentPage + 1,
-                            organizacao.animais.totalPages - 1
+                            animaisByOrganizacao.totalPages - 1
                           )}`}
                           onClick={(e) => {
                             e.preventDefault();
                             handlePageChange(
                               Math.min(
                                 currentPage + 1,
-                                organizacao.animais.totalPages - 1
+                                animaisByOrganizacao.totalPages - 1
                               )
                             );
                           }}
                           className={`bg-orange-400 hover:bg-orange-500 ${
-                            currentPage === organizacao.animais.totalPages - 1
+                            currentPage === animaisByOrganizacao.totalPages - 1
                               ? "pointer-events-none opacity-50"
                               : ""
                           }`}
@@ -464,7 +565,7 @@ const OrganizacaoDetails = () => {
               </>
             )}
           </section>
-          {error && (
+          {animaisError && (
             <div className="flex items-center justify-center bg-red-50 border border-red-300 p-4 rounded-lg mt-6">
               <div className="flex items-center gap-4">
                 {/* Ícone de erro */}
@@ -490,7 +591,7 @@ const OrganizacaoDetails = () => {
                     Oops! Algo deu errado.
                   </p>
                   <p className="text-red-500 mt-2 font-tertiary">
-                    Não conseguimos carregar os dados das organizações. Tente
+                    Não conseguimos carregar os animais da organização. Tente
                     novamente mais tarde.
                   </p>
                 </div>

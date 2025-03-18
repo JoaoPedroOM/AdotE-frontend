@@ -161,6 +161,9 @@ const convertToBackendValues = (changedFields: Record<string, any>) => {
       queryClient.invalidateQueries({
         queryKey: ["animais", organizacao?.organizacao_id],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["allAnimals"],
+      });
     } catch (error) {
       console.error("Erro ao atualizar animal:", error);
       toast.error("Erro ao atualizar o animal.");

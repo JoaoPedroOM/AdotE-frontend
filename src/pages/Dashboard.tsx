@@ -59,7 +59,7 @@ const Dashboard = () => {
             <InforCards animais={animais.totalItems} />
           )}
 
-          <AnimalDetails animais={animais.animals} carregando={isLoading} />
+          <AnimalDetails animais={animais.content} carregando={isLoading} />
 
           {/* Paginação */}
               {animais.totalPages > 1 && (

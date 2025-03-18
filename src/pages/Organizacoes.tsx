@@ -279,9 +279,9 @@ const Organizacoes = () => {
               </div>
             ) : (
               <>
-                {organizations.organizacoes?.length > 0 ? (
+                {organizations.content?.length > 0 ? (
                   <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-2">
-                    {organizations.organizacoes?.map(
+                    {organizations.content?.map(
                       (organizacao: Organizacao) => (
                         <OrganizationCard
                           key={organizacao.id}
