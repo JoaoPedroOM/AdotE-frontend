@@ -87,6 +87,14 @@ const Navbar = () => {
                 Sobre Nós
               </HashLink>
             </li>
+            <li className="md:w-auto w-full">
+              <Link
+                to="/organizacoes"
+                className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
+              >
+                Organizações
+              </Link>
+            </li>
             {isLoggedIn ? (
               <div className="md:w-auto w-full md:px-3">
                 <div className="md:block hidden">
@@ -103,12 +111,6 @@ const Navbar = () => {
                         className="cursor-pointer"
                       >
                         Dashboard
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => navigate("/organizacoes")}
-                        className="cursor-pointer"
-                      >
-                        Organizações
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => navigate("/reset")}
