@@ -166,14 +166,6 @@ const Navbar = () => {
               <>
                 <li className="md:w-auto w-full">
                   <Link
-                    to="/organizacoes"
-                    className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
-                  >
-                    Organizações
-                  </Link>
-                </li>
-                <li className="md:w-auto w-full">
-                  <Link
                     to="/login"
                     className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
                   >
