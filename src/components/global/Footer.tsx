@@ -15,10 +15,13 @@ const Footer = () => {
                   <Link to="/">Home</Link>
                 </li>
                 <li className="text-xl font-medium font-tertiary">
-                  <Link to="/login">Sou ONG</Link>
+                  <Link to="/adote">Adotar</Link>
                 </li>
                 <li className="text-xl font-medium font-tertiary">
-                  <Link to="/">Sobre Nós</Link>
+                  <Link to="/organizacoes">Organizações</Link>
+                </li>
+                <li className="text-xl font-medium font-tertiary">
+                  <Link to="/login">Sou ONG</Link>
                 </li>
               </ul>
             </div>
