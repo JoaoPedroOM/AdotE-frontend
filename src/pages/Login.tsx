@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router";
 import { Helmet } from "react-helmet";
 
 import logo from "../assets/img/logo2.png";
+import authBanner from "../assets/img/authBanner.avif"
 import { Label } from "@/components/ui/label";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -167,7 +168,7 @@ const Login = () => {
 
       <div className="w-1/2 h-screen py-5 pr-5 lg:block hidden">
         <img
-          src="https://images.unsplash.com/photo-1599194921977-f89d8bd0eefb?q=80&w=2030&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          src={authBanner}
           className="h-full w-full rounded-2xl object-cover"
         />
       </div>

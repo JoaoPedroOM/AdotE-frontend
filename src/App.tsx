@@ -4,6 +4,10 @@ import pata from "./assets/img/paw.png";
 import Card from "./components/Card";
 import Hero from "./components/Hero";
 
+import banner1 from "./assets/img/banner1.avif";
+import banner3 from "./assets/img/banner3.avif";
+import banner4 from "./assets/img/banner4.avif";
+
 const App = () => {
   return (
     <div className="relative w-full">
@@ -50,12 +54,6 @@ const App = () => {
           name="twitter:image"
           content="https://i.ibb.co/4RmPy5f3/homeHero.png"
         />
-        {/* WhatsApp Preview Tags */}
-        <meta
-          property="og:image:secure_url"
-          content="https://i.ibb.co/4RmPy5f3/homeHero.png"
-        />
-        <meta property="og:locale" content="pt_BR" />
       </Helmet>
 
       <img
@@ -80,7 +78,7 @@ const App = () => {
           <Card
             title="Encontre o Melhor Amigo Para a Vida Toda"
             description="Adotar um animal é uma experiência transformadora. Eles não só ganham um lar, mas também oferecem amor incondicional. Dê uma chance a um novo começo para um amigo peludo que está esperando por você!"
-            imageUrl="https://images.unsplash.com/photo-1618527532718-c8f3cbbc81fb?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            imageUrl={banner1}
             buttonTitle="Encontre seu amigo"
             buttonPath="/adote"
             imagePosition="left"
@@ -100,7 +98,7 @@ const App = () => {
           <Card
             title="Encontre Seu Companheiro Ideal em Um Clique"
             description="Com a nossa plataforma, você tem acesso aos perfis detalhados de animais resgatados. Selecione o que mais combina com sua família e entre em contato diretamente com o abrigo para iniciar o processo de adoção."
-            imageUrl="https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=2030&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            imageUrl={banner3}
             buttonTitle="Adote Agora"
             buttonPath="/adote"
             imagePosition="left"
@@ -110,7 +108,7 @@ const App = () => {
           <Card
             title="Adote com Transparência e Amor"
             description="Nossos abrigos e ONGs cadastrados oferecem informações completas sobre cada animal resgatado, para que você possa fazer uma escolha informada e cheia de carinho. Dê uma nova chance a um amigo peludo!"
-            imageUrl="https://images.unsplash.com/photo-1602979677071-1781b7f40023?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            imageUrl={banner4}
             buttonTitle="Encontre um pet"
             buttonPath="/adote"
             imagePosition="right"
