@@ -233,7 +233,7 @@ const Adote = () => {
           {/* Cards */}
           <section className="mt-5">
             {isLoading ? (
-              <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4 mb-8">
+              <div className="grid gap-4 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 mb-8">
                 <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
                 <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
                 <Skeleton className="h-[400px] w-full rounded-lg shadow-sm" />
@@ -245,8 +245,8 @@ const Adote = () => {
               </div>
             ) : (
               <>
-                {animais.content.length > 0 ? (
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8 justify-items-center">
+                {animais.content?.length > 0 ? (
+                  <div className="grid gap-4 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 mb-8 justify-items-center">
                     {animais.content?.map((animal: Animal) => (
                       <AnimalCard key={animal.id} animal={animal} />
                     ))}

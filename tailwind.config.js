@@ -44,7 +44,11 @@ export default {
   			'accordion-up': 'accordion-up 0.2s ease-out',
   		},
 		screens: {
-			'sm-max': { 'max': '39.99rem' }
+			'sm-max': { 'max': '39.99rem' },
+			'md-max': { 'max': '57.5rem' },
+			'lg-max': { 'max': '64rem' },
+			'xl-max': { 'max': '75rem' },
+			'xl-min': { 'min': '75rem' },
 		},
   	}
   },

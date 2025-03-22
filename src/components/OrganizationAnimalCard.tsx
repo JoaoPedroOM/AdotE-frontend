@@ -8,7 +8,7 @@ import FormEdit from "./FormEdit";
 
 import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "./ui/badge";
-import { Heart } from "lucide-react";
+import { Heart, Ruler, Syringe } from "lucide-react";
 import { ImageSwiper } from "../components/ui/image-swiper";
 // import { Link } from "react-router";
 
@@ -61,11 +61,11 @@ const OrganizationAnimalCard = ({ animal }: { animal: Animal }) => {
               {capitalizeFirstLetter(animal.sexo)}
             </Badge>
             <Badge variant="secondary">
-              <Heart className="w-4 h-4 mr-1 text-green-500" />
+              <Syringe className="w-4 h-4 mr-1 text-green-500" />
               {animal.vacinado ? "Vacinado" : "Não Vacinado"}
             </Badge>
             <Badge variant="secondary">
-              <Heart className="w-4 h-4 mr-1 text-blue-500" />
+              <Ruler className="w-4 h-4 mr-1 text-blue-500" />
               {capitalizeFirstLetter(animal.porte)}
             </Badge>
           </div>

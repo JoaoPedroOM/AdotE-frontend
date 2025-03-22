@@ -3,7 +3,7 @@ import type { Animal } from "../models/animal";
 import { Card, CardContent } from "../components/ui/card";
 import { ImageSwiper } from "./ui/image-swiper";
 import { Badge } from "./ui/badge";
-import { Heart } from "lucide-react";
+import { Heart, Ruler, Syringe } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -35,7 +35,7 @@ const AnimalCard = ({ animal }: AnimalCardProps) => {
         to={`/adote/perfil/${animal.id}${window.location.search}`} 
         state={{ from: location }}
       >
-        <CardContent className="p-4">
+        <CardContent className="py-4 px-3">
           <div className="mt-4">
             <div className="flex justify-between">
               <>
@@ -63,11 +63,11 @@ const AnimalCard = ({ animal }: AnimalCardProps) => {
                 {capitalizeFirstLetter(animal.sexo)}
               </Badge>
               <Badge variant="secondary">
-                <Heart className="w-4 h-4 mr-1 text-green-500" />
+                <Syringe  className="w-4 h-4 mr-1 text-green-500" />
                 {animal.vacinado ? "Vacinado" : "Não vac."}
               </Badge>
               <Badge variant="secondary">
-                <Heart className="w-4 h-4 mr-1 text-blue-500" />
+                <Ruler className="w-4 h-4 mr-1 text-blue-500" />
                 {capitalizeFirstLetter(animal.porte)}
               </Badge>
             </div>

@@ -13,7 +13,6 @@ import {
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  obterDadosChavePixService,
   obterDetalhesOrganizacao,
 } from "@/services/animalService";
 import { Skeleton } from "./ui/skeleton";
@@ -42,16 +41,7 @@ const OrganizacaoConfig = () => {
     staleTime: 20 * 60 * 1000,
   });
 
-  const {
-    data: dadosChavePix,
-    isLoading: loadingDadosChavePix,
-    error: errorDadosChavePix,
-  } = useQuery({
-    queryKey: ["dadosChavePix", Number(organizacao?.organizacao_id)],
-    queryFn: () =>
-      obterDadosChavePixService(Number(organizacao?.organizacao_id)),
-    staleTime: 20 * 60 * 1000,
-  });
+  console.log(organizacaoData)
 
   const {
     register,
@@ -64,8 +54,8 @@ const OrganizacaoConfig = () => {
   });
 
   const openModal = () => {
-    if (dadosChavePix.length > 0) {
-      const chaveExistente = dadosChavePix[0];
+    if (organizacaoData.chavesPix.length > 0) {
+      const chaveExistente = organizacaoData.chavesPix[0];
       reset({
         tipoChave: chaveExistente.tipo,
         chave: chaveExistente.chave,
@@ -96,7 +86,7 @@ const OrganizacaoConfig = () => {
         toast.success("Chave cadastrada com sucesso!");
       }
       queryClient.invalidateQueries({
-        queryKey: ["dadosChavePix", Number(organizacao?.organizacao_id)],
+        queryKey: ["organizacaoData", Number(organizacao?.organizacao_id)],
       });
       reset();
       setIsModalOpen(false);
@@ -120,13 +110,7 @@ const OrganizacaoConfig = () => {
           </h2>
 
           <div className="space-y-4">
-            {errorDadosChavePix && (
-              <p className="text-red-500">
-                {(error as Error).message ||
-                  "Erro ao carregar informações sobre o pix."}
-              </p>
-            )}
-            {loadingDadosChavePix ? (
+            {isLoading ? (
               <div className="md:p-4 p-0 rounded-lg">
                 <div className="flex justify-between items-center mb-2">
                   <div className="flex items-center gap-2">
@@ -137,7 +121,7 @@ const OrganizacaoConfig = () => {
                 </div>
                 <Skeleton className="h-8 w-full rounded-md" />
               </div>
-            ) : dadosChavePix && dadosChavePix.length > 0 ? (
+            ) : organizacaoData && organizacaoData.chavesPix.length > 0 ? (
               <div className="md:p-4 p-0 rounded-lg">
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="font-medium md:text-base text-sm flex items-center gap-2 text-gray-700">
@@ -154,7 +138,7 @@ const OrganizacaoConfig = () => {
                   </Button>
                 </div>
                 <p className="bg-[#eeeeee] py-2 px-3 rounded text-sm break-all text-gray-900 font-semibold">
-                  {dadosChavePix[0].chave}
+                  {organizacaoData.chavesPix[0].chave}
                 </p>
               </div>
             ) : (

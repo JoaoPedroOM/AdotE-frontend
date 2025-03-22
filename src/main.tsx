@@ -7,7 +7,6 @@ import { Analytics } from "@vercel/analytics/react";
 
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
-
   integrations: [
     Sentry.browserTracingIntegration(),
     Sentry.browserProfilingIntegration(),
