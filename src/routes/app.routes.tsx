@@ -71,12 +71,12 @@ export function AppRoutes() {
       <Route element={<PublicRoute />}>
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/reset" element={<ResetPassword />} />
       </Route>
 
       {/* Rota privada (somente quem está logado pode acessar) */}
       <Route element={<PrivateRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/reset" element={<ResetPassword />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />

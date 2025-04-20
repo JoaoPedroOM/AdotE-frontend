@@ -113,12 +113,6 @@ const Navbar = () => {
                         Dashboard
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() => navigate("/reset")}
-                        className="cursor-pointer"
-                      >
-                        Resetar senha
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
                         onClick={handleLogout}
                         className="cursor-pointer"
                       >
@@ -142,14 +136,6 @@ const Navbar = () => {
                       className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
                     >
                       Dashboard
-                    </Link>
-                  </li>
-                  <li className="md:w-auto w-full">
-                    <Link
-                      to="/reset"
-                      className="block py-2 px-3 md:text-[#30302E] text-black rounded-sm hover:bg-[#FFEDD5] md:hover:bg-transparent md:border-0 md:hover:text-orange-700 md:p-0"
-                    >
-                      Resetar senha
                     </Link>
                   </li>
                   <li className="md:w-auto w-full">

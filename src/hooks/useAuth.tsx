@@ -1,6 +1,8 @@
 import {
   cadastroService,
   loginService,
+  sendCodigoService,
+  verifyCodigoService,
   resetPasswordService,
 } from "@/services/authService";
 import { useEffect, useState } from "react";
@@ -52,7 +54,7 @@ export const useAuth = () => {
     cnpj: string,
     endereco: any,
     email: string,
-    senha: string,
+    senha: string
   ) => {
     try {
       await cadastroService(nome, numero, cnpj, endereco, email, senha);
@@ -64,14 +66,39 @@ export const useAuth = () => {
     }
   };
 
-  const resetPassword = async (email: string, password: string) => {
+  const sendCodigo = async (email: string) => {
     try {
-      await resetPasswordService(email, password);
+      return await sendCodigoService(email);
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.message ||
+        "Erro ao enviar código de verificação. Tente novamente.";
+      console.error("Erro no sendCodigo:", errorMessage);
+      throw new Error(errorMessage);
+    }
+  };
+  
+
+  const verifyCodigo = async (email: string, token: string) => {
+    try {
+      return await verifyCodigoService(email, token);
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.message ||
+        "Erro ao verificar código de verificação. Tente novamente.";
+        throw new Error(errorMessage);
+    }
+    return false;
+  };
+
+  const resetPassword = async (email: string,token:string, novaSenha: string) => {
+    try {
+      return await resetPasswordService(email,token, novaSenha);
     } catch (err: any) {
       const errorMessage =
         err?.response?.data?.message ||
         "Erro ao resetar senha. Tente novamente.";
-      setError(errorMessage);
+        throw new Error(errorMessage);
     }
   };
 
@@ -80,5 +107,13 @@ export const useAuth = () => {
     islogout();
   };
 
-  return { login, cadastroAndLogin, resetPassword, logout, error };
+  return {
+    login,
+    cadastroAndLogin,
+    sendCodigo,
+    verifyCodigo,
+    resetPassword,
+    logout,
+    error,
+  };
 };

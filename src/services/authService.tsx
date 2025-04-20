@@ -1,5 +1,4 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 
 const api = axios.create({
   baseURL:  import.meta.env.VITE_API_BASE_URL,
@@ -46,19 +45,36 @@ export const cadastroService = async (
   }
 };
 
-export const resetPasswordService = async (email: string, password: string) => {
-  const token = Cookies.get("authToken");
+export const sendCodigoService = async (email: string) => {
+  try{
+    const response = await api.post("/reset-password/request", { email });
+    return response.data;
+  }catch (error: any) {
+    console.error(
+      "Erro na requisição:",
+      error?.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+export const verifyCodigoService = async (email: string, token: string) => {
+  try {
+    const response = await api.post("/reset-password/verify", { email, token });
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      "Erro na requisição:",
+      error?.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+export const resetPasswordService = async (email: string, token: string, novaSenha: string) => {
 
   try {
-    const response = await api.post(
-      "/auth/password-reset",
-      { email, password },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await api.post("/reset-password/new-password",{ email, token, novaSenha });
     return response.data;
   } catch (error: any) {
     console.error(

@@ -45,5 +45,38 @@ export const registerSchema = baseAuthSchema.extend({
   cnpj: z.string().length(18, "O CNPJ precisa ser válido"),
 });
 
+export const emailSchema = z.object({
+  email: z
+    .string({ required_error: "O e-mail é obrigatório" })
+    .email("O e-mail precisa ser válido")
+    .min(1, "O e-mail é obrigatório"),
+});
+export type EmailFormValues = z.infer<typeof emailSchema>;
+
+export const codigoStepSchema = z.object({
+  email: z
+    .string()
+    .email()
+    .min(1),
+  codigo: z
+    .string({ required_error: "O código de verificação é obrigatório" })
+    .length(6, "O código de verificação deve ter 6 dígitos")
+    .regex(/^\d+$/, "O código de verificação deve conter apenas números"),
+});
+export type OtpStepFormValues = z.infer<typeof codigoStepSchema>;
+
+export const newPasswordSchema = z.object({
+  email: z
+    .string()
+    .email()
+    .min(1),
+  password: z
+    .string({ required_error: "A senha é obrigatória" })
+    .min(6, "A senha precisa ter pelo menos 6 caracteres"),
+});
+export type NewPasswordFormValues = z.infer<typeof newPasswordSchema>;
+
+export type ResetPasswordFormValues = EmailFormValues | OtpStepFormValues | NewPasswordFormValues;
+
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type RegisterFormValues = z.infer<typeof registerSchema>;

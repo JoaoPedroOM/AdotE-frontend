@@ -139,14 +139,14 @@ const Login = () => {
             <p className="text-xs font-semibold text-red-700 mt-1">
               <ErrorMessage errors={errors} name="password" />
             </p>
-            {/* <div className="mt-2 text-right">
+            <div className="mt-2 text-right">
               <Link
                 className="text-orange-600 font-tertiary font-normal"
                 to="/reset"
               >
                 Esqueceu sua senha?
               </Link>
-            </div> */}
+            </div>
           </div>
 
           {error && (
