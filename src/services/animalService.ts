@@ -214,22 +214,3 @@ export const atualizarChavePixService = async (
   );
   return response.data;
 };
-
-export const generateQrCode = async (
-  tipo: string,
-  chave: string,
-  nome: string,
-  cidade: string
-) => {
-  try {
-    const response = await api.post("/qrcodepix", {
-      tipo,
-      chave,
-      nome,
-      cidade,
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
