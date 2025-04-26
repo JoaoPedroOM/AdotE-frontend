@@ -64,7 +64,7 @@ const OrganizacaoConfig = () => {
       setIsEditing(true);
     } else {
       reset({
-        tipoChave: "Telefone",
+        tipoChave: "TELEFONE",
         chave: "",
       });
       setIsEditing(false);
@@ -75,11 +75,11 @@ const OrganizacaoConfig = () => {
   async function onSubmit(data: OrganizacaoFormValues) {
     try {
       if (isEditing && currentPixId) {
-        await atualizarChavePix(currentPixId, data.tipoChave, data.chave);
+        await atualizarChavePix(currentPixId, data.tipoChave.toUpperCase(), data.chave);
         toast.success("Chave atualizada com sucesso!");
       } else {
         await cadastroChavePix(
-          data.tipoChave,
+          data.tipoChave.toUpperCase(),
           data.chave,
           Number(organizacao?.organizacao_id)
         );
@@ -179,11 +179,11 @@ const OrganizacaoConfig = () => {
                   {...register("tipoChave")}
                   className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
                 >
-                  <option value="Telefone">Telefone</option>
-                  <option value="Email">Email</option>
+                  <option value="TELEFONE">Telefone</option>
+                  <option value="EMAIL">Email</option>
                   <option value="CPF">CPF</option>
                   <option value="CNPJ">CNPJ</option>
-                  <option value="Outro">Chave aleatória</option>
+                  <option value="OUTRO">Chave aleatória</option>
                 </select>
                 <ErrorMessage
                   errors={errors}

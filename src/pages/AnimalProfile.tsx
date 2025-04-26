@@ -24,8 +24,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
+import FormularioAdocaoModal from "@/components/FormularioAdocaoModal";
 
 const AnimalProfile = () => {
+  const [modalAberto, setModalAberto] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const { id } = useParams();
@@ -337,9 +339,10 @@ const AnimalProfile = () => {
                 </div>
 
                 <div className="pt-4 space-y-4">
-                  <Button className="w-full bg-orange-400 hover:bg-orange-500">
+                  <Button className="w-full py-5 text-[#fff] bg-orange-500 hover:bg-orange-600"   onClick={() => setModalAberto(true)}>
                     Quero Adotar
                   </Button>
+                  <FormularioAdocaoModal open={modalAberto} onClose={() => setModalAberto(false)} animalId={animal.id} organizacaoId={animal.organizacao.id} />
                 </div>
               </div>
             </div>

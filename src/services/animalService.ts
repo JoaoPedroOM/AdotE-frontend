@@ -106,6 +106,15 @@ export const animalProfile = async (id: number) => {
   }
 };
 
+export const obterPerguntas = async () => {
+  try {
+    const response = await api.get(`/pergunta`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const organizacoesDisponiveis = async (
   page: number,
   estado: string,

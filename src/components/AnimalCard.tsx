@@ -4,6 +4,12 @@ import { Card, CardContent } from "../components/ui/card";
 import { ImageSwiper } from "./ui/image-swiper";
 import { Badge } from "./ui/badge";
 import { Heart, Ruler, Syringe } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../components/ui/tooltip";
 
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -32,7 +38,7 @@ const AnimalCard = ({ animal }: AnimalCardProps) => {
         <ImageSwiper images={imageUrls} />
       </div>
       <Link
-        to={`/adote/perfil/${animal.id}${window.location.search}`} 
+        to={`/adote/perfil/${animal.id}${window.location.search}`}
         state={{ from: location }}
       >
         <CardContent className="py-4 px-3">
@@ -53,7 +59,8 @@ const AnimalCard = ({ animal }: AnimalCardProps) => {
                 "font-normal text-base font-tertiary text-gray-700 mb-2"
               )}
             >
-              {animal.organizacao.endereco.cidade}, {animal.organizacao.endereco.estado}
+              {animal.organizacao.endereco.cidade},{" "}
+              {animal.organizacao.endereco.estado}
             </h2>
 
             <div className="flex items-center gap-2">
@@ -63,7 +70,7 @@ const AnimalCard = ({ animal }: AnimalCardProps) => {
                 {capitalizeFirstLetter(animal.sexo)}
               </Badge>
               <Badge variant="secondary">
-                <Syringe  className="w-4 h-4 mr-1 text-green-500" />
+                <Syringe className="w-4 h-4 mr-1 text-green-500" />
                 {animal.vacinado ? "Vacinado" : "Não vac."}
               </Badge>
               <Badge variant="secondary">
@@ -71,9 +78,23 @@ const AnimalCard = ({ animal }: AnimalCardProps) => {
                 {capitalizeFirstLetter(animal.porte)}
               </Badge>
             </div>
-            <p className="text-sm text-gray-800 mt-2">
-              <strong>Abrigo:</strong> {animal.organizacao.nome}
-            </p>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <p className="text-sm text-gray-800 mt-2 truncate max-w-[calc(100%-10px)]">
+                    <strong>Abrigo:</strong>{" "}
+                    <span className="inline-block max-w-[180px] align-middle truncate">
+                      {animal.organizacao.nome.length > 32
+                        ? animal.organizacao.nome.slice(0, 32) + "..."
+                        : animal.organizacao.nome}
+                    </span>
+                  </p>
+                </TooltipTrigger>
+                <TooltipContent className="z-[999]">
+                  <p>{animal.organizacao.nome}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </CardContent>
       </Link>
