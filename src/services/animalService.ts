@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const api = axios.create({
-  baseURL:  import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
 });
 
@@ -222,4 +222,86 @@ export const atualizarChavePixService = async (
     }
   );
   return response.data;
+};
+
+export const enviaFormularioService = async (dadosEnvio: any) => {
+  try {
+    const response = await api.post("/formulario", dadosEnvio);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const formulariosAnimaisService = async (organizacaoId: number) => {
+  const token = Cookies.get("authToken");
+
+  try {
+    const response = await api.get(
+      `/formulario/organizacao/${organizacaoId}/animais`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getFormulariosByAnimalId = async (animalId: number) => {
+  const token = Cookies.get("authToken");
+
+  try {
+    const response = await api.get(`/formulario/animal/${animalId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const recusarFormularioService = async (formId: number, mensagem: string) => {
+  const token = Cookies.get("authToken");
+  
+  try {
+    const response = await api.post(
+      `/formulario/recusar/${formId}`, 
+      { mensagem }, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const aceitaFormularioService = async (formId: number) => {
+  const token = Cookies.get("authToken");
+  try {
+    const response = await api.post(
+      `/formulario/aceitar/${formId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao aceitar formulário:", error);
+    throw error;
+  }
 };

@@ -8,8 +8,8 @@ export const adocaoSchema = z.object({
   idade: z.string()
     .refine((value) => {
       const idade = parseInt(value);
-      return !isNaN(idade) && idade >= 18 && idade <= 80;
-    }, "Idade deve ser um número válido entre 18 e 80"),
+      return !isNaN(idade) && idade >= 21 && idade <= 80;
+    }, "Idade deve ser um número válido entre 21 e 80"),
   
   cpf: z.string()
     .min(14, "CPF deve estar no formato correto")

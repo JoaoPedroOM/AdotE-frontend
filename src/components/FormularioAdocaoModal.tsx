@@ -13,12 +13,28 @@ import {
   AdocaoFormValues,
   adocaoSchema,
 } from "@/schemas/formularioAdocaoSchema";
+import { useAnimal } from "@/hooks/useAnimal";
 
 interface FormularioAdocaoModalProps {
   open: boolean;
   onClose: () => void;
   animalId?: number;
   organizacaoId?: number;
+}
+interface RespostaEnvio {
+  idPergunta: number;
+  resposta: string;
+}
+
+interface FormularioEnvio {
+  idAnimal: number;
+  idOrganizacao: number;
+  nomeAdotante: string;
+  email: string;
+  idade: number;
+  telefone: string;
+  cpf: string;
+  respostas: RespostaEnvio[];
 }
 
 const FormularioAdocaoModal: React.FC<FormularioAdocaoModalProps> = ({
@@ -27,20 +43,14 @@ const FormularioAdocaoModal: React.FC<FormularioAdocaoModalProps> = ({
   animalId,
   organizacaoId,
 }) => {
-  const {
-    data: perguntas = [],
-    isLoading: perguntaLoading,
-    isError: perguntaError,
-  } = useQuery({
-    queryKey: ["perguntas"],
-    queryFn: () => obterPerguntas(),
-  });
+  const { envioFormulario, error } = useAnimal();
 
   const [respostas, setRespostas] = useState<Record<string | number, string>>(
     {}
   );
 
   const [initialSetupDone, setInitialSetupDone] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const {
     register,
@@ -73,7 +83,7 @@ const FormularioAdocaoModal: React.FC<FormularioAdocaoModalProps> = ({
     14: ["Sim", "Não"],
     17: ["Sim", "Não"],
     18: ["Sim", "Não"],
-    19: ["Sim", "Não"],
+    19: ["Sim"],
   };
 
   const perguntasCondicionais: Record<
@@ -93,6 +103,15 @@ const FormularioAdocaoModal: React.FC<FormularioAdocaoModalProps> = ({
     const respostaAnterior = respostas[condicional.dependeDe];
     return respostaAnterior === condicional.valorEsperado;
   };
+
+  const {
+    data: perguntas = [],
+    isLoading: perguntaLoading,
+    isError: perguntaError,
+  } = useQuery({
+    queryKey: ["perguntas"],
+    queryFn: () => obterPerguntas(),
+  });
 
   useEffect(() => {
     if (perguntas.length > 0 && !initialSetupDone) {
@@ -153,6 +172,17 @@ const FormularioAdocaoModal: React.FC<FormularioAdocaoModalProps> = ({
     trigger(`respostas.${perguntaId}`);
   };
 
+  const formatarRespostasParaEnvio = (
+    respostasObj: Record<string | number, string>
+  ): Array<{ idPergunta: number; resposta: string }> => {
+    return Object.entries(respostasObj)
+      .filter(([_, resposta]) => resposta !== "")
+      .map(([idStr, resposta]) => ({
+        idPergunta: Number(idStr),
+        resposta: resposta,
+      }));
+  };
+
   const onSubmit = async (data: FieldValues) => {
     try {
       const respostasCompletas = { ...respostas };
@@ -165,15 +195,21 @@ const FormularioAdocaoModal: React.FC<FormularioAdocaoModalProps> = ({
         }
       });
 
-      const dadosEnvio = {
-        ...data,
-        animalId: animalId,
-        respostas: respostasCompletas,
-        organizacaoId: organizacaoId,
+      const respostasFormatadas =
+        formatarRespostasParaEnvio(respostasCompletas);
+
+      const dadosEnvio: FormularioEnvio = {
+        idAnimal: animalId || 0,
+        idOrganizacao: organizacaoId || 0,
+        nomeAdotante: data.nome,
+        email: data.email,
+        idade: Number(data.idade),
+        telefone: data.telefone,
+        cpf: data.cpf,
+        respostas: respostasFormatadas,
       };
 
-      console.log("Dados a serem enviados:", dadosEnvio);
-      // await enviarFormularioAdocao(dadosEnvio);
+      await envioFormulario(dadosEnvio);
 
       toast.success("Formulário enviado com sucesso!", {
         description:
@@ -189,6 +225,7 @@ const FormularioAdocaoModal: React.FC<FormularioAdocaoModalProps> = ({
       toast.error("Erro ao enviar formulário", {
         description: "Por favor, tente novamente mais tarde.",
       });
+      setErrorMessage(error + " ❌");
     }
   };
 
@@ -261,6 +298,8 @@ const FormularioAdocaoModal: React.FC<FormularioAdocaoModalProps> = ({
               <input
                 type="number"
                 placeholder="Idade"
+                min="21"
+                max="80"
                 className="mt-1 w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 font-tertiary"
                 {...register("idade")}
               />
@@ -372,6 +411,18 @@ const FormularioAdocaoModal: React.FC<FormularioAdocaoModalProps> = ({
                 </div>
               );
             })}
+
+            {error && (
+              <div className="bg-red-100 text-red-700 p-3 rounded-md mb-3 text-sm font-semibold w-full max-w-sm">
+                {error}
+              </div>
+            )}
+
+            {errorMessage && (
+              <div className="bg-red-100 text-red-700 p-3 rounded-md mb-3 text-sm font-semibold w-full max-w-sm">
+                {errorMessage}
+              </div>
+            )}
 
             <Button
               type="submit"

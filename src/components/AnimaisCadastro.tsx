@@ -104,6 +104,9 @@ const AnimaisCadastro = () => {
         queryClient.invalidateQueries({
           queryKey: ["animais", organizacao_id],
         });
+        queryClient.invalidateQueries({
+          queryKey: ["allAnimals"],
+        });
       } else {
         console.error("Nenhuma foto foi selecionada.");
       }

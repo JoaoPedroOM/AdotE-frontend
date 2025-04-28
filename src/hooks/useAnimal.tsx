@@ -3,6 +3,7 @@ import {
   cadastroAnimalService,
   cadastroChavePixService,
   updateAnimalService,
+  enviaFormularioService,
 } from "@/services/animalService";
 import { useState } from "react";
 
@@ -130,11 +131,27 @@ export const useAnimal = () => {
     }
   };
 
+  const envioFormulario = async (
+    dadosEnvio: any
+  ) => {
+    try{
+      return await enviaFormularioService(dadosEnvio)
+    }catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Erro ao enviar formulário. Tente novamente.";
+      throw new Error(errorMessage);
+    }
+    return false;
+  }
+
   return {
     cadastrarAnimal,
     atualizaAnimal,
     cadastroChavePix,
     atualizarChavePix,
+    envioFormulario,
     error,
   };
 };
