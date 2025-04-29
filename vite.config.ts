@@ -9,6 +9,9 @@ export default defineConfig({
     org: "adote",
     project: "adote-react"
   })],
+  define: {
+    global: 'window', 
+  },
 
   resolve: {
     alias: {

@@ -142,20 +142,20 @@ const AnimalMessages: React.FC = () => {
   };
 
   const handleAccept = async (form: AdotanteForme) => {
-   try{
-    await aceitaFormularioService(Number(form.id));
-    toast.success("Formulário aceito com sucesso!");
-    queryClient.invalidateQueries({
-      queryKey: ["animaisForms"],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ["animalForms"],
-    });
-    setExpandedFormId(null);
-   }catch(error){
-    console.error("Erro ao aceitar formulário:", error);
-    toast.error("Erro ao aceitar formulário.");
-   }
+    try {
+      await aceitaFormularioService(Number(form.id));
+      toast.success("Formulário aceito com sucesso!");
+      queryClient.invalidateQueries({
+        queryKey: ["animaisForms"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["animalForms"],
+      });
+      setExpandedFormId(null);
+    } catch (error) {
+      console.error("Erro ao aceitar formulário:", error);
+      toast.error("Erro ao aceitar formulário.");
+    }
   };
 
   return (
@@ -287,7 +287,7 @@ const AnimalMessages: React.FC = () => {
                                 <CheckCircle className="w-4 h-4" />
                               )}
                               {form.status === "PENDENTE" && (
-                                 <Hourglass className="w-4 h-4"/>
+                                <Hourglass className="w-4 h-4" />
                               )}
                             </span>
 
@@ -324,7 +324,6 @@ const AnimalMessages: React.FC = () => {
                           </div>
 
                           <FormularioRespostas respostas={form.respostas} />
-                          
 
                           <div className="flex gap-2">
                             <button

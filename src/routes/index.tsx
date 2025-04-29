@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-query";
 import { Toaster } from "../components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { WebSocketManager } from "@/utils/WebSocketManager";
 
 export function Routes() {
   const { islogin } = useAuthStore();
@@ -30,6 +31,7 @@ export function Routes() {
     <BrowserRouter>
     <TooltipProvider>
       <QueryClientProvider client={queryClient}>
+        <WebSocketManager/>
         <AppRoutes />
         <Toaster />   
       </QueryClientProvider>

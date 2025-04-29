@@ -41,8 +41,6 @@ const OrganizacaoConfig = () => {
     staleTime: 20 * 60 * 1000,
   });
 
-  console.log(organizacaoData)
-
   const {
     register,
     reset,
