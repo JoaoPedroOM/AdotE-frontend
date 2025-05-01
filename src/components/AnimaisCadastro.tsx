@@ -128,7 +128,7 @@ const AnimaisCadastro = () => {
       <DialogTrigger asChild>
         <Button
           variant="default"
-          className="bg-orange-300 text-black hover:bg-orange-400"
+          className="bg-orange-300 text-black hover:bg-orange-400 font-tertiary"
         >
           Cadastrar
         </Button>

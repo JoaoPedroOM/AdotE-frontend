@@ -266,17 +266,20 @@ export const getFormulariosByAnimalId = async (animalId: number) => {
   }
 };
 
-export const recusarFormularioService = async (formId: number, mensagem: string) => {
+export const recusarFormularioService = async (
+  formId: number,
+  mensagem: string
+) => {
   const token = Cookies.get("authToken");
-  
+
   try {
     const response = await api.post(
-      `/formulario/recusar/${formId}`, 
-      { mensagem }, 
+      `/formulario/recusar/${formId}`,
+      { mensagem },
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
       }
     );
@@ -306,6 +309,21 @@ export const aceitaFormularioService = async (formId: number) => {
   }
 };
 
+export const excluirFormularioService = async (formId: number) => {
+  const token = Cookies.get("authToken");
+  try {
+    const response = await api.delete(`/formulario/${formId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao excluir formulário:", error);
+    throw error;
+  }
+};
+
 export const fetchStatesService = async () => {
   const response = await fetch(
     "https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome"
@@ -316,7 +334,7 @@ export const fetchStatesService = async () => {
   return response.json();
 };
 
-export const fetchCitiesService = async (stateUF : string) => {
+export const fetchCitiesService = async (stateUF: string) => {
   if (!stateUF) return [];
   const response = await fetch(
     `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${stateUF}/municipios?orderBy=nome`

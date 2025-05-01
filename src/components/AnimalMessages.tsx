@@ -1,5 +1,6 @@
 import {
   aceitaFormularioService,
+  excluirFormularioService,
   formulariosAnimaisService,
   getFormulariosByAnimalId,
   recusarFormularioService,
@@ -64,6 +65,7 @@ const AnimalMessages: React.FC = () => {
   const [selectedAnimal, setSelectedAnimal] = useState<Animal | null>(null);
   const [expandedFormId, setExpandedFormId] = useState<number | null>(null);
   const [formIdToDelete, setFormIdToDelete] = useState<number | null>(null);
+  const [acceptingFormId, setAcceptingFormId] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   const {
@@ -144,6 +146,7 @@ const AnimalMessages: React.FC = () => {
 
   const handleAccept = async (form: AdotanteForme) => {
     try {
+      setAcceptingFormId(form.id);
       await aceitaFormularioService(Number(form.id));
       toast.success("Formulário aceito com sucesso!");
       queryClient.invalidateQueries({
@@ -156,6 +159,8 @@ const AnimalMessages: React.FC = () => {
     } catch (error) {
       console.error("Erro ao aceitar formulário:", error);
       toast.error("Erro ao aceitar formulário.");
+    }finally {
+      setAcceptingFormId(null);
     }
   };
 
@@ -166,6 +171,20 @@ const AnimalMessages: React.FC = () => {
     }
     return apenasNumero;
   }
+
+  const handleDeleteForm = async (formId: number) => {
+    try {
+      await excluirFormularioService(formId);
+      queryClient.invalidateQueries({
+        queryKey: ["animaisForms"],
+      });
+      setSelectedAnimal(null);
+      toast.success("Formulário excluído com sucesso!");
+    } catch (error) {
+      console.error("Erro ao deletar formulário:", error);
+      toast.error("Erro ao deletar formulário.");
+    }
+  };
 
   return (
     <div className="w-full h-screen">
@@ -354,7 +373,10 @@ const AnimalMessages: React.FC = () => {
 
                           {form.status === "APROVADO" ? (
                             <div className="flex md:flex-row flex-col-reverse gap-2">
-                              <button className="px-4 py-2 md:text-[16px] text-[14px] bg-red-600 hover:bg-red-700 text-white rounded-lg font-tertiary">
+                              <button
+                                onClick={() => handleDeleteForm(form.id)}
+                                className="px-4 py-2 md:text-[16px] text-[14px] bg-red-600 hover:bg-red-700 text-white rounded-lg font-tertiary"
+                              >
                                 Excluir
                               </button>
                               {form.telefone && (
@@ -389,8 +411,9 @@ const AnimalMessages: React.FC = () => {
                               <button
                                 onClick={() => handleAccept(form)}
                                 className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-tertiary"
+                                disabled={acceptingFormId === form.id}
                               >
-                                Aceitar
+                                 {acceptingFormId === form.id ? "Aceitando..." : "Aceitar"}
                               </button>
                             </div>
                           )}
