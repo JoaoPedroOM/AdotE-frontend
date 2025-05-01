@@ -81,8 +81,8 @@ const FormularioAdocaoModal: React.FC<FormularioAdocaoModalProps> = ({
     11: ["Sim", "Não"],
     12: ["Sim", "Não"],
     14: ["Sim", "Não"],
-    17: ["Sim", "Não"],
-    18: ["Sim", "Não"],
+    17: ["Sim"],
+    18: ["Sim"],
     19: ["Sim"],
   };
 
@@ -214,6 +214,7 @@ const FormularioAdocaoModal: React.FC<FormularioAdocaoModalProps> = ({
       toast.success("Formulário enviado com sucesso!", {
         description:
           "Entraremos em contato em breve para prosseguir com a adoção.",
+          duration: 9000,
       });
 
       reset();

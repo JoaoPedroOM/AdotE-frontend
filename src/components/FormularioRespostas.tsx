@@ -25,8 +25,8 @@ export default function FormularioRespostas({ respostas }: FormularioRespostasPr
   };
 
   return (
-    <div className="space-y-4 rounded-lg p-4">
-      <h4 className="font-semibold text-gray-900 font-tertiary text-lg mb-2">
+    <div className="space-y-4 rounded-lg md:p-4 px-1 py-4">
+      <h4 className="font-semibold text-gray-900 font-tertiary md:text-lg text-base mb-2">
         Informações do Formulário
       </h4>
       

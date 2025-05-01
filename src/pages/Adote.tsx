@@ -24,7 +24,11 @@ import { Skeleton } from "../components/ui/skeleton";
 import { Filter } from "lucide-react";
 
 import type { Animal } from "../models/animal";
-import { animaisDisponiveis } from "@/services/animalService";
+import {
+  animaisDisponiveis,
+  fetchCitiesService,
+  fetchStatesService,
+} from "@/services/animalService";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
@@ -38,6 +42,41 @@ const Adote = () => {
   const [age, setAge] = useState(searchParams.get("age") || "");
   const [size, setSize] = useState(searchParams.get("size") || "");
   const [gender, setGender] = useState(searchParams.get("gender") || "");
+  const [estado, setEstado] = useState(searchParams.get("estado") || "");
+  const [cidade, setCidade] = useState(searchParams.get("cidade") || "");
+
+  // Query para buscar estados
+  const { data: states, isLoading: isStatesLoading } = useQuery({
+    queryKey: ["states"],
+    queryFn: fetchStatesService,
+  });
+
+  // Query para buscar cidades com base no estado selecionado
+  const { data: cities, isLoading: isCitiesLoading } = useQuery({
+    queryKey: ["cities", estado],
+    queryFn: () => fetchCitiesService(estado),
+    enabled: !!estado,
+  });
+
+  const handleStateChange = (newState: any) => {
+    setEstado(newState);
+    setCidade("");
+
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("estado", newState);
+    newSearchParams.delete("cidade");
+    newSearchParams.set("page", "0");
+    setSearchParams(newSearchParams);
+  };
+
+  const handleCityChange = (newCity: any) => {
+    setCidade(newCity);
+
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("cidade", newCity);
+    newSearchParams.set("page", "0");
+    setSearchParams(newSearchParams);
+  };
 
   useEffect(() => {
     const newSearchParams = new URLSearchParams();
@@ -46,10 +85,12 @@ const Adote = () => {
     if (age) newSearchParams.set("age", age);
     if (size) newSearchParams.set("size", size);
     if (gender) newSearchParams.set("gender", gender);
+    if (estado) newSearchParams.set("estado", estado);
+    if (cidade) newSearchParams.set("cidade", cidade);
     if (currentPage) newSearchParams.set("page", currentPage.toString());
 
     setSearchParams(newSearchParams);
-  }, [type, age, size, gender, currentPage, setSearchParams]);
+  }, [type, age, size, gender, estado, cidade, currentPage, setSearchParams]);
 
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);
@@ -60,6 +101,8 @@ const Adote = () => {
     setAge("");
     setSize("");
     setGender("");
+    setEstado("");
+    setCidade("");
 
     const newSearchParams = new URLSearchParams();
     newSearchParams.set("page", "0");
@@ -112,7 +155,7 @@ const Adote = () => {
               <div className="text-lg font-bold font-tertiary">Filtros</div>
 
               <div className="flex gap-2">
-                {type || age || size || gender ? (
+                {type || age || size || gender || estado || cidade ? (
                   <Button
                     variant="outline"
                     onClick={handleClearFilters}
@@ -134,6 +177,81 @@ const Adote = () => {
             {isFilterOpen && (
               <Card className="p-4 border rounded-lg shadow-sm fade-in">
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {/* Filtro Estado */}
+                  <div>
+                    <Label
+                      htmlFor="state-filter"
+                      className="text-sm font-medium mb-1.5 block"
+                    >
+                      Estado
+                    </Label>
+                    <Select value={estado} onValueChange={handleStateChange}>
+                      <SelectTrigger
+                        id="state-filter"
+                        className="w-full z-[500]"
+                      >
+                        <SelectValue placeholder="Selecione um estado" />
+                      </SelectTrigger>
+                      <SelectContent className="z-[500]">
+                        <SelectItem value="allEstado">
+                          Todos os estados
+                        </SelectItem>
+                        {isStatesLoading ? (
+                          <SelectItem value="loading">Carregando...</SelectItem>
+                        ) : (
+                          states?.map((estado: any) => (
+                            <SelectItem key={estado.id} value={estado.sigla}>
+                              {estado.nome}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Filtro Cidade */}
+                  <div>
+                    <Label
+                      htmlFor="city-filter"
+                      className="text-sm font-medium mb-1.5 block"
+                    >
+                      Cidade
+                    </Label>
+                    <Select
+                      value={cidade}
+                      onValueChange={handleCityChange}
+                      disabled={!estado || isCitiesLoading}
+                    >
+                      <SelectTrigger
+                        id="city-filter"
+                        className="w-full z-[500]"
+                      >
+                        <SelectValue
+                          placeholder={
+                            estado
+                              ? "Selecione uma cidade"
+                              : "Selecione um estado primeiro"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent className="z-[500]">
+                        {estado && (
+                          <SelectItem value="allCidade">
+                            Todas as cidades
+                          </SelectItem>
+                        )}
+                        {isCitiesLoading ? (
+                          <SelectItem value="loading">Carregando...</SelectItem>
+                        ) : (
+                          cities?.map((cidade: any) => (
+                            <SelectItem key={cidade.id} value={cidade.nome}>
+                              {cidade.nome}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   {/* Filtro Tipo de Animal */}
                   <div>
                     <Label

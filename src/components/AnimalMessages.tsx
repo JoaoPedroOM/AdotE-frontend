@@ -27,6 +27,7 @@ import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { CheckCircle, Hourglass } from "lucide-react";
 import FormularioRespostas from "./FormularioRespostas";
+import { Separator } from "./ui/separator";
 
 interface AdotanteForme {
   id: number;
@@ -158,6 +159,14 @@ const AnimalMessages: React.FC = () => {
     }
   };
 
+  function formatandoTelefoneWhatsApp(telefone: any) {
+    const apenasNumero = telefone.replace(/\D/g, "");
+    if (apenasNumero.length === 11) {
+      return `55${apenasNumero}`;
+    }
+    return apenasNumero;
+  }
+
   return (
     <div className="w-full h-screen">
       <h1 className="text-2xl font-bold mb-6 text-gray-900 font-main">
@@ -269,78 +278,122 @@ const AnimalMessages: React.FC = () => {
                         className="md:p-4 px-2 py-4 bg-gray-100 rounded-t-lg flex justify-between items-center cursor-pointer hover:bg-gray-200"
                         onClick={() => handleFormToggle(form.id)}
                       >
-                        <h3 className="text-base font-tertiary text-gray-800 font-bold">
+                        <h3 className="text-base font-tertiary text-gray-800 font-bold flex-1 min-w-0 pr-4 truncate">
                           {form.nomeAdotante}
                         </h3>
-                        <div className="flex items-center gap-2">
-                          <div
-                            className={`px-2 py-1 text-xs font-semibold font-tertiary rounded-md flex items-center gap-1 ${
-                              form.status === "PENDENTE"
-                                ? "bg-yellow-500 text-white"
-                                : form.status === "APROVADO"
-                                ? "bg-green-500 text-white"
-                                : "bg-red-100 text-red-800"
-                            }`}
-                          >
-                            <span className="block md:hidden">
-                              {form.status === "APROVADO" && (
-                                <CheckCircle className="w-4 h-4" />
-                              )}
-                              {form.status === "PENDENTE" && (
-                                <Hourglass className="w-4 h-4" />
-                              )}
-                            </span>
 
-                            <span className="hidden md:block">
-                              {form.status}
-                            </span>
+                        <div className="flex items-center gap-4 flex-shrink-0">
+                          <div className="flex items-center gap-2">
+                            <div
+                              className={`px-2 py-1 text-xs font-semibold font-tertiary rounded-md flex items-center gap-1 ${
+                                form.status === "PENDENTE"
+                                  ? "bg-yellow-500 text-white"
+                                  : form.status === "APROVADO"
+                                  ? "bg-green-500 text-white"
+                                  : null
+                              }`}
+                            >
+                              <span className="block md:hidden">
+                                {form.status === "APROVADO" && (
+                                  <CheckCircle className="w-4 h-4" />
+                                )}
+                                {form.status === "PENDENTE" && (
+                                  <Hourglass className="w-4 h-4" />
+                                )}
+                              </span>
+                              <span className="hidden md:block whitespace-nowrap">
+                                {form.status}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-500 font-tertiary whitespace-nowrap">
+                              {form.dataEnvio}
+                            </p>
                           </div>
-                          <p className="text-xs text-gray-500 font-tertiary">
-                            {form.dataEnvio}
-                          </p>
                         </div>
                       </div>
                       {expandedFormId === form.id && (
                         <div className="p-4 space-y-4">
                           <div>
-                            <h4 className="font-semibold text-gray-900 font-tertiary">
+                            <h4 className="font-semibold text-gray-900 font-tertiary md:text-lg text-base">
                               Dados Pessoais
                             </h4>
+                            <Separator className="my-2" />
                             <p className="text-gray-800 font-tertiary">
-                              Nome: {form.nomeAdotante}
+                              <span className="font-semibold text-gray-800">
+                                Nome:
+                              </span>{" "}
+                              {form.nomeAdotante}
                             </p>
                             <p className="text-gray-800 font-tertiary">
-                              Idade: {form.idade}
+                              <span className="font-semibold text-gray-800">
+                                Idade:
+                              </span>{" "}
+                              {form.idade}
                             </p>
                             <p className="text-gray-800 font-tertiary">
-                              CPF: {form.cpf}
+                              <span className="font-semibold text-gray-800">
+                                CPF:
+                              </span>{" "}
+                              {form.cpf}
                             </p>
                             <p className="text-gray-800 font-tertiary">
-                              Telefone: {form.telefone}
+                              <span className="font-semibold text-gray-800">
+                                Telefone:
+                              </span>{" "}
+                              {form.telefone}
                             </p>
                             <p className="text-gray-800 font-tertiary">
-                              Email: {form.email}
+                              <span className="font-semibold text-gray-800">
+                                Email:
+                              </span>{" "}
+                              {form.email}
                             </p>
                           </div>
 
                           <FormularioRespostas respostas={form.respostas} />
 
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => openDenyModal(form.id)}
-                              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-tertiary"
-                            >
-                              Recusar
-                            </button>
-                            {form.status !== "APROVADO" && (
+                          {form.status === "APROVADO" ? (
+                            <div className="flex md:flex-row flex-col-reverse gap-2">
+                              <button className="px-4 py-2 md:text-[16px] text-[14px] bg-red-600 hover:bg-red-700 text-white rounded-lg font-tertiary">
+                                Excluir
+                              </button>
+                              {form.telefone && (
+                                <a
+                                  href={`https://wa.me/${formatandoTelefoneWhatsApp(
+                                    form.telefone
+                                  )}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center justify-center md:text-[16px] text-[14px] gap-2 px-4 py-2 rounded-lg font-tertiary text-white bg-emerald-600 hover:bg-emerald-700 transition-all duration-300 shadow-md hover:shadow-lg"
+                                >
+                                  Chamar no WhatsApp
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    className="md:w-5 md:h-5 w-4 h-4"
+                                  >
+                                    <path d="M20.52 3.48a12 12 0 0 0-16.97 0 12 12 0 0 0-2.3 13.89L.27 23.72l6.56-1.94A12 12 0 0 0 12 24c3.2 0 6.2-1.24 8.48-3.52a12 12 0 0 0 0-16.97zM12 22a9.94 9.94 0 0 1-5.16-1.45l-.37-.22-3.89 1.15 1.17-3.79-.25-.39A10 10 0 1 1 12 22zm5.16-7.38c-.28-.14-1.66-.82-1.92-.91s-.45-.14-.64.14-.74.91-.9 1.1-.33.21-.6.07a8.02 8.02 0 0 1-2.36-1.46 8.76 8.76 0 0 1-1.62-2c-.17-.29 0-.44.13-.59.14-.14.29-.33.44-.5.14-.17.19-.29.29-.48.1-.19.05-.36 0-.5s-.64-1.53-.88-2.1c-.23-.55-.47-.47-.64-.48l-.55-.01c-.19 0-.5.07-.76.36a3.17 3.17 0 0 0-.96 2.36c0 1.39.99 2.73 1.13 2.92.14.19 1.94 3.06 4.72 4.29.66.29 1.17.46 1.57.59.66.21 1.26.18 1.74.11.53-.08 1.66-.68 1.9-1.34.24-.65.24-1.2.17-1.32-.07-.12-.25-.18-.53-.32z" />
+                                  </svg>
+                                </a>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => openDenyModal(form.id)}
+                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-tertiary"
+                              >
+                                Recusar
+                              </button>
                               <button
                                 onClick={() => handleAccept(form)}
                                 className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-tertiary"
                               >
                                 Aceitar
                               </button>
-                            )}
-                          </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>

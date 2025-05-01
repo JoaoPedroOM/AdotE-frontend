@@ -305,3 +305,24 @@ export const aceitaFormularioService = async (formId: number) => {
     throw error;
   }
 };
+
+export const fetchStatesService = async () => {
+  const response = await fetch(
+    "https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome"
+  );
+  if (!response.ok) {
+    throw new Error("Falha ao carregar estados");
+  }
+  return response.json();
+};
+
+export const fetchCitiesService = async (stateUF : string) => {
+  if (!stateUF) return [];
+  const response = await fetch(
+    `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${stateUF}/municipios?orderBy=nome`
+  );
+  if (!response.ok) {
+    throw new Error("Falha ao carregar cidades");
+  }
+  return response.json();
+};

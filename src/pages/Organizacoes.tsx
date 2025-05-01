@@ -22,33 +22,12 @@ import {
 import { Skeleton } from "../components/ui/skeleton";
 import { Filter } from "lucide-react";
 
-import { organizacoesDisponiveis } from "@/services/animalService";
+import { fetchCitiesService, fetchStatesService, organizacoesDisponiveis } from "@/services/animalService";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { Organizacao } from "@/models/organizacao";
 import OrganizationCard from "@/components/OrganizationCard";
-
-const fetchStates = async () => {
-  const response = await fetch(
-    "https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome"
-  );
-  if (!response.ok) {
-    throw new Error("Falha ao carregar estados");
-  }
-  return response.json();
-};
-
-const fetchCities = async (stateUF: any) => {
-  if (!stateUF) return [];
-  const response = await fetch(
-    `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${stateUF}/municipios?orderBy=nome`
-  );
-  if (!response.ok) {
-    throw new Error("Falha ao carregar cidades");
-  }
-  return response.json();
-};
 
 const Organizacoes = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -58,16 +37,15 @@ const Organizacoes = () => {
   const [estado, setEstado] = useState(searchParams.get("estado") || "");
   const [cidade, setCidade] = useState(searchParams.get("cidade") || "");
 
-
   const { data: states, isLoading: isStatesLoading } = useQuery({
     queryKey: ["states"],
-    queryFn: fetchStates,
+    queryFn: fetchStatesService,
   });
 
   // Usando o Tanstack Query para obter as cidades do estado selecionado
   const { data: cities, isLoading: isCitiesLoading } = useQuery({
     queryKey: ["cities", estado],
-    queryFn: () => fetchCities(estado),
+    queryFn: () => fetchCitiesService(estado),
     enabled: !!estado, 
   });
 
