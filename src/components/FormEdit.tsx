@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { AnimalFormValues, animalSchema } from "@/schemas/cadastroSchema";
 import type { Animal } from "@/models/animal";
-import {deleteAnimalService} from "@/services/animalService";
+import { deleteAnimalService } from "@/services/animalService";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePaginationStore } from "@/stores/usePaginationStore";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -32,7 +32,7 @@ const FormEdit = ({ animal }: FormEditProps) => {
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
 
-  const { atualizaAnimal } = useAnimal();
+  const { atualizaAnimal, animalAdopted } = useAnimal();
 
   const {
     register,
@@ -94,70 +94,79 @@ const FormEdit = ({ animal }: FormEditProps) => {
     }
   }, [animal?.id, setValue, isDialogOpen]);
 
-const getChangedFields = (data: AnimalFormValues) => {
-  const changedFields: Record<string, any> = {};
+  const getChangedFields = (data: AnimalFormValues) => {
+    const changedFields: Record<string, any> = {};
 
-  Object.entries(data).forEach(([key, value]) => {
-    if (key === "fotos") return;
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === "fotos") return;
 
-    if (value !== originalValues[key]) {
-      changedFields[key] = value;
+      if (value !== originalValues[key]) {
+        changedFields[key] = value;
+      }
+    });
+
+    return changedFields;
+  };
+
+  const convertToBackendValues = (changedFields: Record<string, any>) => {
+    const converted = { ...changedFields };
+
+    if (converted.tipo) {
+      converted.tipo = converted.tipo === "Cachorro" ? "CACHORRO" : "GATO";
     }
-  });
+    if (converted.sexo) {
+      converted.sexo = converted.sexo === "Macho" ? "MACHO" : "FEMEA";
+    }
+    if (converted.porte) {
+      converted.porte =
+        converted.porte === "Pequeno"
+          ? "PEQUENO"
+          : converted.porte === "Medio"
+          ? "MEDIO"
+          : "GRANDE";
+    }
+    if (converted.idade) {
+      converted.idade =
+        converted.idade === "Filhote"
+          ? "FILHOTE"
+          : converted.idade === "Jovem"
+          ? "JOVEM"
+          : converted.idade === "Adulto"
+          ? "ADULTO"
+          : "IDOSO";
+    }
 
-  return changedFields;
-};
+    return converted;
+  };
 
-const convertToBackendValues = (changedFields: Record<string, any>) => {
-  const converted = { ...changedFields };
-  
-  if (converted.tipo) {
-    converted.tipo = converted.tipo === "Cachorro" ? "CACHORRO" : "GATO";
-  }
-  if (converted.sexo) {
-    converted.sexo = converted.sexo === "Macho" ? "MACHO" : "FEMEA";
-  }
-  if (converted.porte) {
-    converted.porte = converted.porte === "Pequeno" ? "PEQUENO" :
-      converted.porte === "Medio" ? "MEDIO" : "GRANDE";
-  }
-  if (converted.idade) {
-    converted.idade = converted.idade === "Filhote" ? "FILHOTE" :
-      converted.idade === "Jovem" ? "JOVEM" :
-      converted.idade === "Adulto" ? "ADULTO" : "IDOSO";
-  }
-
-  return converted;
-};
-  
   async function onSubmit(data: AnimalFormValues) {
     if (!animal) return;
     try {
       const changedFields = getChangedFields(data);
-      
-      const hasChanges = 
+
+      const hasChanges =
         Object.keys(changedFields).length > 0 ||
         newImages.length > 0 ||
         imagesToDelete.length > 0;
-  
+
       if (!hasChanges) {
         toast.info("Nenhuma alteração detectada.");
         setIsDialogOpen(false);
         return;
       }
-  
+
       const backendChangedFields = convertToBackendValues(changedFields);
-  
+
       await atualizaAnimal(
-        animal.id, 
-        backendChangedFields, 
-        newImages, 
+        animal.id,
+        backendChangedFields,
+        newImages,
         imagesToDelete
       );
-  
+
       toast.success("Animal atualizado com sucesso!");
       setIsDialogOpen(false);
-  
+
       queryClient.invalidateQueries({
         queryKey: ["animais", organizacao?.organizacao_id],
       });
@@ -166,13 +175,13 @@ const convertToBackendValues = (changedFields: Record<string, any>) => {
       });
       queryClient.invalidateQueries({
         queryKey: ["animaisForms", organizacao?.organizacao_id],
-      })
+      });
     } catch (error) {
       console.error("Erro ao atualizar animal:", error);
       toast.error("Erro ao atualizar o animal.");
     }
   }
-  
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
 
@@ -189,7 +198,8 @@ const convertToBackendValues = (changedFields: Record<string, any>) => {
     const newFileUrls = files.map((file) => URL.createObjectURL(file));
 
     setValue("fotos", [
-      ...(watch("fotos")?.filter((url : any) => !imagesToDelete.includes(url)) || []),
+      ...(watch("fotos")?.filter((url: any) => !imagesToDelete.includes(url)) ||
+        []),
       ...newFileUrls,
     ]);
     setNewImages((prev) => [...prev, ...files]);
@@ -211,7 +221,7 @@ const convertToBackendValues = (changedFields: Record<string, any>) => {
 
     setValue(
       "fotos",
-      currentImages.filter((_ : any, i:any) => i !== index)
+      currentImages.filter((_: any, i: any) => i !== index)
     );
   };
 
@@ -246,10 +256,31 @@ const convertToBackendValues = (changedFields: Record<string, any>) => {
     }
   }
 
+  const handleAnimalAdopted = async (animalId: number) => {
+    try {
+      await animalAdopted(animalId, true);
+      toast.success("Seu animal foi adotado com sucesso!");
+      setIsDialogOpen(false);
+
+      queryClient.invalidateQueries({
+        queryKey: ["animais", organizacao?.organizacao_id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["allAnimals"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["animaisForms", organizacao?.organizacao_id],
+      });
+    } catch (error) {
+      console.error("Erro ao marcar animal como adotado:", error);
+      toast.error("Erro ao marcar o animal como adotado.");
+    }
+  }
+
   useEffect(() => {
     return () => {
       if (watch("fotos")) {
-        watch("fotos").forEach((url : any) => {
+        watch("fotos").forEach((url: any) => {
           if (url.startsWith("blob:")) {
             URL.revokeObjectURL(url);
           }
@@ -484,7 +515,7 @@ const convertToBackendValues = (changedFields: Record<string, any>) => {
               Máximo de 3 fotos no total.
             </p>
             <div className="mt-4 grid grid-cols-3 gap-2">
-              {(watch("fotos") || []).map((foto : any, index : any) => (
+              {(watch("fotos") || []).map((foto: any, index: any) => (
                 <div key={index} className="relative">
                   <img
                     src={foto}
@@ -521,6 +552,7 @@ const convertToBackendValues = (changedFields: Record<string, any>) => {
           <div className="flex flex-col gap-2">
             <Button
               type="submit"
+              size={"lg"}
               variant="default"
               className="w-full"
               disabled={isSubmitting}
@@ -528,7 +560,17 @@ const convertToBackendValues = (changedFields: Record<string, any>) => {
               {isSubmitting ? "Salvando..." : "Salvar alterações"}
             </Button>
             <Button
+              size={"lg"}
+              className="w-full border border-orange-500 text-orange-500 bg-orange-100 hover:bg-orange-500 hover:text-white"
               type="button"
+              onClick={() => animal && handleAnimalAdopted(animal.id)}
+            >
+              Marcar como adotado
+            </Button>
+
+            <Button
+              type="button"
+              size={"lg"}
               variant="destructive"
               className="w-full"
               onClick={() => animal && deleteAnimal(animal.id)}

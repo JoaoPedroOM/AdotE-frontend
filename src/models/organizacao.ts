@@ -24,4 +24,5 @@ export interface Organizacao {
   email: string;
   animais?: Animal[];
   chavesPix?: ChavePix[];
+  animaisAdotados: number;
 }

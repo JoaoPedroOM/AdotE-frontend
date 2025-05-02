@@ -79,7 +79,9 @@ export const animaisDisponiveis = async (
   tipo: string,
   idade: string,
   porte: string,
-  sexo: string
+  sexo: string,
+  estado: string,
+  cidade: string
 ) => {
   try {
     const response = await api.get("/animal", {
@@ -89,6 +91,8 @@ export const animaisDisponiveis = async (
         idade,
         porte,
         sexo,
+        estado,
+        cidade,
       },
     });
     return response.data;

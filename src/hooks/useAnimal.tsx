@@ -97,6 +97,26 @@ export const useAnimal = () => {
     }
   };
 
+  const animalAdopted = async (animalId: number, adotado: boolean) => {
+    try {
+      const formData = new FormData();
+      const json = JSON.stringify({ adotado });
+      const dadosBlob = new Blob([json], { type: "application/json" });
+      formData.append("dados", dadosBlob);
+  
+      await updateAnimalService(animalId, formData);
+      setError(null);
+      return true;
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Erro ao marcar animal como adotado. Tente novamente.";
+      setError(errorMessage);
+      return false;
+    }
+  };
+
   const cadastroChavePix = async (
     tipoChave: string,
     chave: string,
@@ -131,12 +151,10 @@ export const useAnimal = () => {
     }
   };
 
-  const envioFormulario = async (
-    dadosEnvio: any
-  ) => {
-    try{
-      return await enviaFormularioService(dadosEnvio)
-    }catch (err: any) {
+  const envioFormulario = async (dadosEnvio: any) => {
+    try {
+      return await enviaFormularioService(dadosEnvio);
+    } catch (err: any) {
       const errorMessage =
         err?.response?.data?.message ||
         err?.message ||
@@ -144,7 +162,7 @@ export const useAnimal = () => {
       throw new Error(errorMessage);
     }
     return false;
-  }
+  };
 
   return {
     cadastrarAnimal,
@@ -152,6 +170,7 @@ export const useAnimal = () => {
     cadastroChavePix,
     atualizarChavePix,
     envioFormulario,
+    animalAdopted,
     error,
   };
 };

@@ -114,14 +114,16 @@ const Adote = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["allAnimals", currentPage, type, age, size, gender],
+    queryKey: ["allAnimals", currentPage, type, age, size, gender, estado, cidade],
     queryFn: () =>
       animaisDisponiveis(
         currentPage,
         type && type !== "allTypes" ? type.toUpperCase() : "",
         age && age !== "allAge" ? age.toUpperCase() : "",
         size && size !== "allSize" ? size.toUpperCase() : "",
-        gender && gender !== "allGen" ? gender.toUpperCase() : ""
+        gender && gender !== "allGen" ? gender.toUpperCase() : "",
+        estado && estado !== "allEstado" ? estado.toUpperCase() : "",
+        cidade && cidade !== "allCidade" ? cidade : "",
       ),
     staleTime: 20 * 60 * 1000,
   });

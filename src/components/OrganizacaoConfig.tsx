@@ -18,6 +18,7 @@ import {
 import { Skeleton } from "./ui/skeleton";
 import { useAnimal } from "@/hooks/useAnimal";
 import { toast } from "sonner";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 const OrganizacaoConfig = () => {
   const queryClient = useQueryClient();
@@ -103,7 +104,7 @@ const OrganizacaoConfig = () => {
         {/* PIX Section */}
         <div className="bg-[#f7fafc] rounded-lg border border-[#d1d5db] shadow-md md:p-6 p-4 mb-6 text-gray-900">
           <h2 className="md:text-xl text-[18px] font-semibold text-gray-800 mb-4 flex items-center gap-2 font-main">
-            <Wallet className="h-5 w-5 text-primary" />
+            <Wallet className="h-5 w-5" />
             Recebimento de doações
           </h2>
 
@@ -156,6 +157,23 @@ const OrganizacaoConfig = () => {
           </div>
         </div>
 
+        {/* Cards de Informações */}
+        {isLoading ? (
+          <Skeleton className="h-[120px] w-full rounded-lg shadow-sm" />
+        ) : (
+          <Card className="bg-[#f7fafc]">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-semibold text-gray-800 font-main md:text-xl text-[18px]">
+              Adoções Realizadas
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold font-main">{organizacaoData.animaisAdotados}</div>
+          </CardContent>
+        </Card>
+
+        )}
+        
         {/* Modal para adicionar ou atualizar chave PIX */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="w-full max-w-md z-[999] rounded-lg">

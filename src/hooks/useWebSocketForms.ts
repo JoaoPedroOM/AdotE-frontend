@@ -27,9 +27,6 @@ export const useWebSocketNotification = (
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
-      debug: (str) => {
-        console.debug("[WebSocket Debug]:", str);
-      },
     });
 
     stompClient.onConnect = (_frame: Frame) => {
@@ -55,9 +52,8 @@ export const useWebSocketNotification = (
       });
     };
 
-    stompClient.onStompError = (frame: Frame) => {
+    stompClient.onStompError = (_frame: Frame) => {
       setStatus("error");
-      console.error("[WebSocket] Erro:", frame.headers["message"], frame.body);
       toast.error("Erro ao conectar com notificações em tempo real.");
     };
 
@@ -70,7 +66,6 @@ export const useWebSocketNotification = (
       stompClient.activate();
       setClient(stompClient);
     } catch (err) {
-      console.error("[WebSocket] Erro ao inicializar:", err);
       setStatus("error");
       toast.error("Falha ao iniciar conexão com notificações.");
     }

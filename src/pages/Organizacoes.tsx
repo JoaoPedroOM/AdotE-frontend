@@ -93,7 +93,6 @@ const Organizacoes = () => {
     setSearchParams(newSearchParams);
   };
 
-  // Modifique a query para incluir os filtros de estado e cidade
   const {
     data: organizations = [],
     isLoading,
